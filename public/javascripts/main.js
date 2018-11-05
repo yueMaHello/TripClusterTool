@@ -7,13 +7,22 @@ Since ESRI 4326 is not measured in meters and will lead to issue.
 Since multi-threading and visualization after each iteration in Browser is quite complicated, the code is complex as well.
 If you have to change the code, please be very careful!!!
 */
-
+$('#wait').show();
+$('#title').text('All Trip Cluster Analysis Tool')
 //If your csvfile's title changes, just change values in this Object.
 //Don't need to change other code
-//https://pastebin.com/1RdVMqvz
-$('#title').text('Transit Trip Cluster Analysis Tool')
-$('#wait').show();
-var csvFileTitle = {csvFileUrl:"./data/result_transit.csv",
+var transitCsvFileTitle = {csvFileUrl:"./data/result_transit.csv",
+    origin_zone:"OriginZoneTAZ1669EETP",
+    origin_district:"OriginZoneDistrictTAZ1669EETP",
+    origin_x:"Origin_XCoord",
+    origin_y:"Origin_YCoord",
+    dest_zone:"DestZoneTAZ1669EETP",
+    dest_district:"DestZoneDistrictTAZ1669EETP",
+    dest_x:"Dest_XCoord",
+    dest_y:"Dest_YCoord",
+    weight:"Total"
+};
+var totalCsvFileTitle = {csvFileUrl:"./data/result_total.csv",
     origin_zone:"OriginZoneTAZ1669EETP",
     origin_district:"OriginZoneDistrictTAZ1669EETP",
     origin_x:"Origin_XCoord",
@@ -48,8 +57,8 @@ var sumOfTransitArray;
 var travelMatrix={};
 var selectedDistrict='district';
 var connections = [];
-
-
+var totalDataMatrix =null;
+var transitDataMatrix = null;
 //get esri resource
 require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/GraphicsLayer", "esri/graphic", "esri/geometry/Polyline", "esri/geometry/Polygon", "../externalJS/DirectionalLineSymbol.js","esri/layers/FeatureLayer","../externalJS/geojsonlayer.js",
         "esri/symbols/SimpleMarkerSymbol",  "esri/symbols/SimpleLineSymbol", "esri/symbols/SimpleFillSymbol", "esri/SpatialReference","esri/config", "esri/request",
@@ -78,15 +87,20 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             $("#flowTable tr").remove();
             $("#flowTable").append('<tr><th>Travel Type Selction</th></tr>');
 
-            d3.csv(csvFileTitle.csvFileUrl, function(data) {
-                var uniqueTravelType = data.map(data => data.Purpose_Category)
+
+            d3.queue().defer(d3.csv,transitCsvFileTitle.csvFileUrl)
+                .defer(d3.csv,totalCsvFileTitle.csvFileUrl).await(function(error,transitdata,totaldata) {
+
+                var uniqueTravelType = transitdata.map(transitdata => transitdata.Purpose_Category)
                     .filter((value, index, self) => self.indexOf(value) === index);
-                splitDataIntoTravelMatrix(uniqueTravelType,data);
+
+                transitDataMatrix = splitDataIntoTravelMatrix(uniqueTravelType,transitdata);
+                totalDataMatrix = splitDataIntoTravelMatrix(uniqueTravelType,totaldata);
+                travelMatrix = totalDataMatrix;
                 //dynamic fill the flowTable based on unique travel type
                 uniqueTravelType.forEach(function(key){
                     $("#flowTable").append('<tr class="clickableRow2"><td>'+key+'</td></tr>');
                     $('#wait').hide();
-
                 });
 
                 $(".clickableRow2").on("click", function() {
@@ -120,6 +134,12 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 basemap: "gray",
                 minZoom: 3
             });
+            //LRT layer
+            var lrtFeatureLayer = new FeatureLayer("https://services8.arcgis.com/FCQ1UtL7vfUUEwH7/arcgis/rest/services/LRT/FeatureServer/0",{
+                mode: FeatureLayer.MODE_SNAPSHOT,
+                outFields: ["*"],
+            });
+
             //map toggle
             var toggle = new BasemapToggle({
                 map: map,
@@ -128,29 +148,15 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             toggle.startup();
             //add geojson district layer
             map.on("load", function () {
-                geoJsonLayer1 = new GeojsonLayer({
-                    url:"../data/geoInfo/district1669.geojson",
-                    id:"geoJsonLayer"
-                });
                 map.disableDoubleClickZoom();
-                geoJsonLayer1.setInfoTemplate(false);
-                map.addLayer(geoJsonLayer1);
+                map.addLayer(lrtFeatureLayer);
             });
-            //get notification if radio buttons are clicked
-            $('input:radio[name=allOrDistrict]').change(function() {
-                //cluster all districts
-                if(this.value==='all'){
-                    map.removeLayer(selectedDistrictLayer);
-                    dojo.forEach(connections,dojo.disconnect);
-                    selectedDistrict = 'all';
-                    processData(selectedMatrix,clusterNumber,1);
-
-                }
-                //cluster single destination district
-                else{
-                    connections.push(dojo.connect(geoJsonLayer1, 'onDblClick', MouseClickhighlightGraphic));
-                }
+            geoJsonLayer1 = new GeojsonLayer({
+                url:"../data/geoInfo/district1669.geojson",
+                id:"geoJsonLayer"
             });
+            geoJsonLayer1.setInfoTemplate(false);
+            map.addLayer(geoJsonLayer1);
             //cluster data when clicking on a district zone
             function MouseClickhighlightGraphic(evt){
                 map.removeLayer(selectedDistrictLayer);
@@ -203,6 +209,29 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                     $("#autoRun").click();
                 }
             });
+
+
+            $('input:radio[name=allOrTransit]').change(function() {
+                //cluster all districts
+
+                if(this.value==='all'){
+                    $("#currentIteration").val("0");
+                    clusterNumber =Number($("#clusters").val());
+                    travelMatrix = totalDataMatrix;
+                    processData(selectedMatrix,clusterNumber,1);
+                    $('#title').text('All Trip Cluster Analysis Tool')
+                }
+                //cluster single destination district
+                else{
+
+
+                    $("#currentIteration").val("0");
+                    clusterNumber =Number($("#clusters").val());
+                    travelMatrix = transitDataMatrix;
+                    processData(selectedMatrix,clusterNumber,1);
+                    $('#title').text('Transit Trip Cluster Analysis Tool')
+                }
+            });
             //myVar use the self-defined Variable as its type
             //It has a initial value:10. Actually, the number does nothing.
             //If myVar.SetValue(...) is called, then the function() wrote in myVar will be called.
@@ -217,7 +246,8 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 map.addLayer(graphicsLayer);
                 //each clusted line should have a group of single lines
                 connect.connect(graphicsLayer,"onClick",function(evt){
-                    var clickedGroup = evt.graphic.attributes.indexOfGroup;
+                    var clickedGroup = evt.graphic.attributes.Index;
+                    console.log(clickedGroup)
                     if(typeof(clickedGroup)!=="undefined"){
                         map.removeLayer(startEndLayer);
                         startEndLayer = new GraphicsLayer({ id: "startEndLayer" });
@@ -346,6 +376,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 //It gives a higher possibility to lines with a higher weight to be choosen as a initial cluster center
                 //the algorithm is based on https://medium.com/@peterkellyonline/weighted-random-selection-3ff222917eb6
                 if(selectedDistrict==='all'){
+
                     totalWeight=0;
                     transitArray = travelMatrix[selectedMatrix];
                     for(var i = 0, l = transitArray.length; i<l;i++){
@@ -365,9 +396,11 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                         alert("You haven't select any travel type!");
                     }
                     else if(selectedDistrict ==='district'){
+
                         alert('Please double click on a zone!');
                     }
                     else if(transitArray.length ===0){
+
                         alert('No travel in this zone!');
                         return;
                     }
@@ -401,9 +434,9 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                     newCentroid =newCentroid.filter(function(n){ return n;});
                 }
                 if(transitArray.length>0){
+
                     result = splitIntoGroups();
                 }
-
             }
         });
         //calculate the distance between each line and each cluster center.
@@ -448,12 +481,14 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 //result after the thread finishing calculation
                 function(r) {
                     //c is counter to count how many threads have finished
+                    console.log(c)
                     c+=1;
                     for(var t4=0;t4<GroupArray[r[0]].length;t4++){
                         //fill the transitArrayWithClusters array
                         transitArrayWithClusters[JSON.stringify(r[1][t4])].push(GroupArray[r[0]][t4]);
                     }
                     if(c=== num_threads){
+                        console.log('finfi')
                         //all threads have finished
                         newCentroid = findNewCentroid(transitArrayWithClusters);
                         //call function stored in myVar
@@ -492,7 +527,6 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 }
                 newCentroid.push([orig_x,orig_y,dest_x,dest_y,weight,key]);
             }
-            console.log(newCentroid)
             return newCentroid;
         }
         //generate geojson file which can be used in QGIS
@@ -549,13 +583,12 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                         directionColor: new Color([204, 51, 0]),
                         directionSize: centroidWidth*5
                     });
-
                     var polylineJson = {
                         "paths":[[ [projectedPointOrigin.x, projectedPointOrigin.y], [ projectedPointDest.x, projectedPointDest.y] ] ]
                     };
-                    var infoTemplate = new InfoTemplate("Value: ${value}");
+                    var infoTemplate = new InfoTemplate("District");
                     var advPolyline = new Polyline(polylineJson,viewSpatialReference);
-                    var ag = new Graphic(advPolyline, advSymbol, {indexOfGroup:newCentroid[j][5],value:newCentroid[j][4]}, infoTemplate);
+                    var ag = new Graphic(advPolyline, advSymbol, {Index:newCentroid[j][5],Demand:newCentroid[j][4]}, infoTemplate);
                     graphicsLayer.add(ag);
                 }
             }
@@ -563,12 +596,12 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
         //if user select 'dots' to observe
         function startEndDots(line){
             //it will adjust the size based on current dataset automatically
-            var adjustedSize=line[4]*25/ratio;
+            var adjustedSize=line[4];
             //the data has huge gap, will eliminate very small ones.
-
-            if(adjustedSize<0.5&&adjustedSize>0.05){
-                adjustedSize = 0.5;
-            }
+            //
+            // if(adjustedSize<0.5&&adjustedSize>0.05){
+            //     adjustedSize = 0.5;
+            // }
             var squareSymbol = new SimpleMarkerSymbol({
                 "color":[0,0,128,128],
                 "size":adjustedSize,
@@ -634,12 +667,12 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
         //if user select 'lines' to observe
         function startEndLines(line){
             var centroidWidth;
-            centroidWidth = line[4]*4/ratio;
+            centroidWidth = line[4];
             const pointOrigin = new Point([line[0],line[1]], geoSpatialReference);
             const pointDest = new Point([line[2], line[3]], geoSpatialReference);
             const projectedPointOrigin = projection.project(pointOrigin, viewSpatialReference);
             const projectedPointDest = projection.project(pointDest, viewSpatialReference);
-            var infoTemplate = new InfoTemplate("Value: ${value}","Origin Zone: ${inZone}<br/>Destination Zone:${outZone}");
+            var infoTemplate = new InfoTemplate("Demand: ${value}","Origin Zone: ${inZone}<br/>Destination Zone:${outZone}");
 
             if(centroidWidth*8>0.01){
                 if(line[5]===line[6]){
@@ -686,17 +719,19 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
     });
 //split csv file into several matrices based on travelpurpose
 function splitDataIntoTravelMatrix(uniqueTravelType,data){
+    var thisTravelMatrix = {}
     for(var i=0;i<uniqueTravelType.length;i++){
         var thisTravelType = uniqueTravelType[i];
         var dataOfThisTravelType = [];
         for(var j in data){
             if(data[j].Purpose_Category === thisTravelType){
-                var thisDataArray = [Number(data[j][csvFileTitle.origin_x]),Number(data[j][csvFileTitle.origin_y]),Number(data[j][csvFileTitle.dest_x]),Number(data[j][csvFileTitle.dest_y]),Number(data[j][csvFileTitle.weight]),data[j][csvFileTitle.origin_zone],data[j][csvFileTitle.dest_zone],data[j][csvFileTitle.origin_district],data[j][csvFileTitle.dest_district]];
+                var thisDataArray = [Number(data[j][transitCsvFileTitle.origin_x]),Number(data[j][transitCsvFileTitle.origin_y]),Number(data[j][transitCsvFileTitle.dest_x]),Number(data[j][transitCsvFileTitle.dest_y]),Number(data[j][transitCsvFileTitle.weight]),data[j][transitCsvFileTitle.origin_zone],data[j][transitCsvFileTitle.dest_zone],data[j][transitCsvFileTitle.origin_district],data[j][transitCsvFileTitle.dest_district]];
                 dataOfThisTravelType.push(thisDataArray);
             }
         }
-        travelMatrix[thisTravelType] = dataOfThisTravelType;
+        thisTravelMatrix[thisTravelType] = dataOfThisTravelType;
     }
+    return thisTravelMatrix
 }
 //this is a self defined Varaible
 //If the Varaible's name is changed, then it will call the onChange function.
