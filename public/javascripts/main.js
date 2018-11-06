@@ -105,6 +105,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
 
                 $(".clickableRow2").on("click", function() {
                     //highlight selected row
+                    dojo.forEach(connections,dojo.disconnect);
                     $("#flowTable tr").removeClass("selected");
                     var rowItem = $(this).children('td').map(function () {
                         return this.innerHTML;
@@ -174,8 +175,9 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 var graphic = new Graphic(evt.graphic.geometry, highlightSymbol);
                 selectedDistrictLayer.add(graphic);
                 map.addLayer(selectedDistrictLayer);
-                processData(selectedMatrix,clusterNumber,1);
+
                 $("#currentIteration").val("0");
+                processData(selectedMatrix,clusterNumber,1);
             }
             //disable the map navigation when loading data
             on(map, "update-start", showLoading);
@@ -481,14 +483,13 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 //result after the thread finishing calculation
                 function(r) {
                     //c is counter to count how many threads have finished
-                    console.log(c)
                     c+=1;
                     for(var t4=0;t4<GroupArray[r[0]].length;t4++){
                         //fill the transitArrayWithClusters array
                         transitArrayWithClusters[JSON.stringify(r[1][t4])].push(GroupArray[r[0]][t4]);
                     }
                     if(c=== num_threads){
-                        console.log('finfi')
+
                         //all threads have finished
                         newCentroid = findNewCentroid(transitArrayWithClusters);
                         //call function stored in myVar
@@ -596,7 +597,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
         //if user select 'dots' to observe
         function startEndDots(line){
             //it will adjust the size based on current dataset automatically
-            var adjustedSize=line[4];
+            var adjustedSize=line[4]*5;
             //the data has huge gap, will eliminate very small ones.
             //
             // if(adjustedSize<0.5&&adjustedSize>0.05){
