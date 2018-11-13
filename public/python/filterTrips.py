@@ -32,7 +32,7 @@ with open("./data/trips_1.csv",'r') as tripData:
             purpose = 'PSE_S'
         elif splitPurpose[1] == 'S':
             purpose = 'Other_S'
-        if tuple([travelZoneDistrictCentroidDict[i[10]][0],travelZoneDistrictCentroidDict[i[11]][0],purpose]) in transitResult:
+        if tuple([i[10],i[11],purpose]) in transitResult:
             transitResult[tuple([i[10],i[11],purpose])] += 1 ####Trips/1???
         else:
             transitResult[tuple([i[10],i[11],purpose])] = 1
@@ -61,6 +61,8 @@ for k,v in transitResult.items():
 
 #Generate './public/data/result_total.csv'
 totalResult = {}
+counter = 0
+workCounter = 0
 with open("./data/trips_1.csv",'r') as tripData:
     print('start')
     reader = csv.reader(tripData,delimiter = ',')
@@ -68,25 +70,27 @@ with open("./data/trips_1.csv",'r') as tripData:
         break
     for i in reader:
 
+        counter+=1
         splitPurpose = i[7].split('_')
         purpose = None
         if splitPurpose[1] == 'O':
             purpose = 'O'
         elif splitPurpose[1]=='W':
             purpose = 'W'
+            workCounter+=1
         elif splitPurpose[1]=='B':
             purpose = 'B'
         elif splitPurpose[0]=='PSE' and splitPurpose[1] == 'S':
             purpose = 'PSE_S'
         elif splitPurpose[1] == 'S':
             purpose = 'Other_S'
-        if tuple([travelZoneDistrictCentroidDict[i[10]][0],travelZoneDistrictCentroidDict[i[11]][0],purpose]) in totalResult:
+        if tuple([i[10],i[11],purpose]) in totalResult:
             totalResult[tuple([i[10],i[11],purpose])] += 1 ####Trips/1???
         else:
             totalResult[tuple([i[10],i[11],purpose])] = 1
 
 print('Start writing into output file')
-
+print(counter,workCounter)
 
 with open(outputFileNameOfTotal,'w') as myfile:
     myfile.close()
@@ -95,7 +99,6 @@ csvWriter = csv.writer(open(outputFileNameOfTotal,'w', newline=''))
 csvWriter.writerow(['OriginZoneTAZ1669EETP','OriginZoneDistrictTAZ1669EETP','DestZoneTAZ1669EETP','DestZoneDistrictTAZ1669EETP','Purpose_Category','Total','Origin_XCoord','Origin_YCoord','Dest_XCoord','Dest_YCoord'])
 for k,v in totalResult.items():
 
-    print(travelZoneDistrictCentroidDict[str(k[0])])
 
     OriginDistrict= travelZoneDistrictCentroidDict[str(k[0])][0]
     DestDistrict = travelZoneDistrictCentroidDict[str(k[1])][0]

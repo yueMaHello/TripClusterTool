@@ -12,7 +12,7 @@ $('#wait').show();
 //initialize title
 $('#title').text('All Trip Cluster Analysis Tool');
 //If your csvfiles' title changes, just change values in this Object.
-//Don't need to change other code
+//You don't need to change other code
 let transitCsvFileTitle = {csvFileUrl:"./data/result_transit.csv",
     origin_zone:"OriginZoneTAZ1669EETP",
     origin_district:"OriginZoneDistrictTAZ1669EETP",
@@ -74,6 +74,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 alert("client-side projection is not supported");
                 return;
             }
+            //donnot delete this line
             const projectionPromise = projection.load();
             //don't change. Always 4326 to plot
             viewSpatialReference = new SpatialReference({
@@ -94,7 +95,6 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
               .defer(d3.csv,transitCsvFileTitle.csvFileUrl)
               .defer(d3.csv,totalCsvFileTitle.csvFileUrl)
               .await(function(error,transitdata,totaldata) {
-
                 let uniqueTravelType = transitdata.map(transitdata => transitdata.Purpose_Category)
                     .filter((value, index, self) => self.indexOf(value) === index);
                 //convert the data into desired Json format
@@ -188,11 +188,12 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             on(map, "update-start", showLoading);
             //enable the map navigation when finish loading
             on(map, "update-end", hideLoading);
-
+            //disable all the map navigation actions
             function showLoading() {
                 map.disableMapNavigation();
                 map.hideZoomSlider();
             }
+            //enable map navigation actions
             function hideLoading(error) {
                 map.enableMapNavigation();
                 map.showZoomSlider();
@@ -596,7 +597,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
         //if user select 'dots' to observe
         function startEndDots(line){
             //it will adjust the size based on current dataset automatically
-            let adjustedSize=line[4]*5;
+            var adjustedSize=line[4]*150/ratio;
 
             let squareSymbol = new SimpleMarkerSymbol({
                 "color":[0,0,128,128],
@@ -650,7 +651,6 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             let projectedPointDest = projection.project(destPoint, viewSpatialReference);
             if(line[5] === line[6]){
                 let originG = new Graphic(projectedPointOrigin,squareSymbol,{},null);
-
                 return [originG,null]
             }
             else{
@@ -658,12 +658,11 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 let destG = new Graphic(projectedPointDest, symbolDest, {}, null);
                 return [originG,destG];
             }
-
         }
         //if user select 'lines' to observe
         function startEndLines(line){
             let centroidWidth;
-            centroidWidth = line[4];
+            centroidWidth = line[4]*50/ratio;
             const pointOrigin = new Point([line[0],line[1]], geoSpatialReference);
             const pointDest = new Point([line[2], line[3]], geoSpatialReference);
             const projectedPointOrigin = projection.project(pointOrigin, viewSpatialReference);
@@ -715,7 +714,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
     });
 //split csv file into several matrices based on travelpurpose
 function splitDataIntoTravelMatrix(uniqueTravelType,data){
-    let thisTravelMatrix = {}
+    let thisTravelMatrix = {};
     for(let i=0;i<uniqueTravelType.length;i++){
         let thisTravelType = uniqueTravelType[i];
         let dataOfThisTravelType = [];
@@ -738,9 +737,11 @@ function Variable(initVal, onChange)
     this.onChange = onChange;    //OnChange handler
     //This method returns stored value
     this.GetValue = function(){
-        return this.val;};
+        return this.val;
+    };
     //This method changes the value and calls the given handler
     this.SetValue = function(value){
         this.val = value;
-        this.onChange();};
+        this.onChange();
+    };
 }
