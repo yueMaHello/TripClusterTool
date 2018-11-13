@@ -24,7 +24,7 @@ router.get('/favicon.ico', function (req, res, next) {
     res.sendFile(ico_path);
 });
 router.get('/', function(req, res, next) {
-    res.render('index', { title: 'Transit Trip Cluster Analysis Tool'});
+    res.render('index', { title: 'Trip Cluster Analysis Tool'});
 });
 
 

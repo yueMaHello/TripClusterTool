@@ -7,9 +7,11 @@ Since ESRI 4326 is not measured in meters and will lead to issue.
 Since multi-threading and visualization after each iteration in Browser is quite complicated, the code is complex as well.
 If you have to change the code, please be very careful!!!
 */
+//show the loading symbol
 $('#wait').show();
+//initialize title
 $('#title').text('All Trip Cluster Analysis Tool');
-//If your csvfile's title changes, just change values in this Object.
+//If your csvfiles' title changes, just change values in this Object.
 //Don't need to change other code
 let transitCsvFileTitle = {csvFileUrl:"./data/result_transit.csv",
     origin_zone:"OriginZoneTAZ1669EETP",
@@ -87,23 +89,27 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             $("#flowTable tr").remove();
             $("#flowTable").append('<tr><th>Travel Type Selction</th></tr>');
 
-
-            d3.queue().defer(d3.csv,transitCsvFileTitle.csvFileUrl)
-                .defer(d3.csv,totalCsvFileTitle.csvFileUrl).await(function(error,transitdata,totaldata) {
+            //use d3 to read files
+            d3.queue()
+              .defer(d3.csv,transitCsvFileTitle.csvFileUrl)
+              .defer(d3.csv,totalCsvFileTitle.csvFileUrl)
+              .await(function(error,transitdata,totaldata) {
 
                 let uniqueTravelType = transitdata.map(transitdata => transitdata.Purpose_Category)
                     .filter((value, index, self) => self.indexOf(value) === index);
-
+                //convert the data into desired Json format
                 transitDataMatrix = splitDataIntoTravelMatrix(uniqueTravelType,transitdata);
                 totalDataMatrix = splitDataIntoTravelMatrix(uniqueTravelType,totaldata);
+                //set the dataset to total when first loading the page
                 travelMatrix = totalDataMatrix;
                 //dynamic fill the flowTable based on unique travel type
                 uniqueTravelType.forEach(function(key){
                     $("#flowTable").append('<tr class="clickableRow2"><td>'+key+'</td></tr>');
                     $('#wait').hide();
                 });
-
+                //add click event to the 'travel type selection' table
                 $(".clickableRow2").on("click", function() {
+
                     //highlight selected row
                     dojo.forEach(connections,dojo.disconnect);
                     $("#flowTable tr").removeClass("selected");
@@ -115,7 +121,6 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                     $("#clusters").val(defaultClusterNumber);
                     clusterNumber = defaultClusterNumber;
                     $('#currentIteration').val(0);
-
                     processData(selectedMatrix,clusterNumber,1);
                     connections.push(dojo.connect(geoJsonLayer1, 'onDblClick', MouseClickhighlightGraphic));
 
@@ -215,7 +220,6 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
 
             $('input:radio[name=allOrTransit]').change(function() {
                 //cluster all districts
-
                 if(this.value==='all'){
                     $("#currentIteration").val("0");
                     clusterNumber =Number($("#clusters").val());
@@ -225,8 +229,6 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 }
                 //cluster single destination district
                 else{
-
-
                     $("#currentIteration").val("0");
                     clusterNumber =Number($("#clusters").val());
                     travelMatrix = transitDataMatrix;
@@ -595,11 +597,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
         function startEndDots(line){
             //it will adjust the size based on current dataset automatically
             let adjustedSize=line[4]*5;
-            //the data has huge gap, will eliminate very small ones.
-            //
-            // if(adjustedSize<0.5&&adjustedSize>0.05){
-            //     adjustedSize = 0.5;
-            // }
+
             let squareSymbol = new SimpleMarkerSymbol({
                 "color":[0,0,128,128],
                 "size":adjustedSize,
