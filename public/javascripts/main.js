@@ -557,11 +557,12 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                     maxWidth = newCentroid[p][4];
                 }
             }
-            if(selectedDistrict==='all'){
-                ratio = maxWidth/23;
+
+            if(maxWidth/12<15){
+                ratio = 15
             }
             else{
-                ratio=maxWidth/12;
+                ratio = maxWidth/12
             }
 
             for(let j = 0,k= newCentroid.length;j<k;j++){

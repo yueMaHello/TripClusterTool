@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7d2f36ef-7e8c-4ee7-b0af-4d4f5f07ade3" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/javascripts/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/javascripts/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/python/filterTrips.py" beforeDir="false" afterPath="$PROJECT_DIR$/public/python/filterTrips.py" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -20,8 +20,8 @@
       <file leaf-file-name="main.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/public/javascripts/main.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="596">
-              <caret line="686" column="23" lean-forward="true" selection-start-line="686" selection-start-column="23" selection-end-line="686" selection-end-column="23" />
+            <state relative-caret-position="178">
+              <caret line="559" lean-forward="true" selection-start-line="559" selection-end-line="559" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
               </folding>
@@ -96,9 +96,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>circle</find>
-      <find>symbolO</find>
-      <find>csvFileTitle</find>
       <find>process</find>
       <find>console.log</find>
       <find>console</find>
@@ -124,8 +121,11 @@
       <find>map</find>
       <find>projectionPromise</find>
       <find>result</find>
-      <find>ratio</find>
       <find>print</find>
+      <find>ratio=</find>
+      <find>ratio =</find>
+      <find>selectedDistrict</find>
+      <find>ratio</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -307,12 +307,12 @@
       <workItem from="1539719147463" duration="4132000" />
       <workItem from="1540915024814" duration="26710000" />
       <workItem from="1541518862886" duration="3604000" />
-      <workItem from="1541528609905" duration="16740000" />
+      <workItem from="1541528609905" duration="19778000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="157683000" />
+    <option name="totallyTimeSpent" value="160721000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="16" width="1927" height="1055" extended-state="0" />
@@ -666,8 +666,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/javascripts/main.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="596">
-          <caret line="686" column="23" lean-forward="true" selection-start-line="686" selection-start-column="23" selection-end-line="686" selection-end-column="23" />
+        <state relative-caret-position="178">
+          <caret line="559" lean-forward="true" selection-start-line="559" selection-end-line="559" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
           </folding>
