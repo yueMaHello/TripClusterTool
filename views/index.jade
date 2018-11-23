@@ -51,10 +51,11 @@ html
                   fieldset(data-role='controlgroup')
                     label(for='clusters') Number Of Clusters:
                        input(id='clusters',type='text',value='',name='clusters' size="2")
+                       //Set the default cluster number to 50
                        input(type="range" min="10" max="200" value="50"  id="clusterRange")
                     label(for='clusters') &nbsp&nbsp&nbsp&nbsp Number Of Threads:
                        input(id = 'threadNumber',type = 'text',value = '4', size = '2')
-                       input(type="range" min="2" max="12" value ="4" id="threadRange")
+                       input(type="range" min="2" max="10" value ="4" id="threadRange")
                        input( type="Button" id = "RerunButton" value="Run again ")
                 div(class = "controlPanel")
                   fieldset(data-role='controlgroup')
@@ -82,12 +83,9 @@ html
                             Thing Transit
 
 
-            //- div(id = "dataDiv")
-              //- table(id = "dataTable" border="1" class="table table-bordered table-condensed table-striped table-hover")
+
             div(id = "flowDiv")
               table(id = "flowTable" border="1" class="table table-bordered table-condensed table-striped table-hover")
-            //- div(id = "district")
-            //-   table(id = "districtTable" border="1" class="table table-bordered table-condensed table-striped table-hover")
             div(id="wait" style="display:none;width:69px;height:89px; solid black;position:absolute;top:50%;left:50%;padding:2px;")
                 img(src='./images/loading.gif' width="64" height="64")
                 Thing Loading...

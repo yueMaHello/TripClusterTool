@@ -39,7 +39,6 @@ let map;
 let currentIteration = 1;//initialization
 let result;
 let clusterNumber=50;//initialization
-let defaultClusterNumber = 50;//initialization
 let newCentroid;
 let transitArray=[];
 let clusters = [];
@@ -61,6 +60,7 @@ let selectedDistrict='district';
 let connections = [];
 let totalDataMatrix =null;
 let transitDataMatrix = null;
+let alreadyClicked = false;
 //get esri resource
 require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/GraphicsLayer", "esri/graphic", "esri/geometry/Polyline", "esri/geometry/Polygon", "../externalJS/DirectionalLineSymbol.js","esri/layers/FeatureLayer","../externalJS/geojsonlayer.js",
         "esri/symbols/SimpleMarkerSymbol",  "esri/symbols/SimpleLineSymbol", "esri/symbols/SimpleFillSymbol", "esri/SpatialReference","esri/config", "esri/request",
@@ -118,12 +118,9 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                     }).toArray();
                     $(this).addClass("selected");
                     selectedMatrix=rowItem[0];
-                    $("#clusters").val(defaultClusterNumber);
-                    clusterNumber = defaultClusterNumber;
                     $('#currentIteration').val(0);
                     processData(selectedMatrix,clusterNumber,1);
                     connections.push(dojo.connect(geoJsonLayer1, 'onDblClick', MouseClickhighlightGraphic));
-
                 });
             });
             //range sliders
@@ -165,9 +162,10 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             map.addLayer(geoJsonLayer1);
             //cluster data when clicking on a district zone
             function MouseClickhighlightGraphic(evt){
+                alreadyClicked = false;
                 map.removeLayer(selectedDistrictLayer);
                 selectedDistrictLayer = new GraphicsLayer({ id: "selectedDistrictLayer" });
-                selectedDistrict=evt.graphic.attributes.District;
+                selectedDistrict =evt.graphic.attributes.District;
 
                 let highlightSymbol = new SimpleFillSymbol(
                     SimpleFillSymbol.STYLE_SOLID,
@@ -247,73 +245,16 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 map.removeLayer(graphicsLayer);
                 map.removeLayer(startEndLayer);
                 graphicsLayer = new GraphicsLayer({ id: "graphicsLayer" });
-                //readd the clustered lines
+                //read the clustered lines
                 map.addLayer(graphicsLayer);
                 //each clusted line should have a group of single lines
-                connect.connect(graphicsLayer,"onClick",function(evt){
-                    let clickedGroup = evt.graphic.attributes.Index;
-                    if(typeof(clickedGroup)!=="undefined"){
-                        map.removeLayer(startEndLayer);
-                        startEndLayer = new GraphicsLayer({ id: "startEndLayer" });
-                        //draw dots
-                        if($("#dots").is(':checked') === true){
-                            for (let h =0;h<transitArrayWithClusters[clickedGroup].length;h++){
-                                let orginDest = startEndDots(transitArrayWithClusters[clickedGroup][h]);
-                                startEndLayer.add(orginDest[0]);
-                                if(orginDest[1]!==null){
-                                    startEndLayer.add(orginDest[1]);
-                                }
-                            }
-                        }
-                        //draw lines
-                        else if($("#lines").is(':checked') === true){
-                            for (let h2 =0;h2<transitArrayWithClusters[clickedGroup].length;h2++){
-                                let line = transitArrayWithClusters[clickedGroup][h2];
-                                let ag = startEndLines(line);
-                                if(ag !== null){
-                                    startEndLayer.add(ag);
-                                }
-                            }
-                        }
-                        else{
-                            alert("Some error happens, please try to refresh the page!");
-                        }
-                        map.addLayer(startEndLayer);
-                        if($("#lines").is(':checked') === true){
-                            $(".clickableRow").on("click", function() {
-                                for(let p=0,m =startEndLayer.graphics.length;p<m;p++){
 
-                                    if(startEndLayer.graphics[p].attributes.inZone === rowItems[0] &&startEndLayer.graphics[p].attributes.outZone ===rowItems[1] ){
-                                        startEndLayer.graphics[p].symbol.setColor(new Color([22, 254, 18  ]));
-                                        if(rowItems[0]===rowItems[1]){
-
-                                            startEndLayer.graphics[p].symbol.outline.setColor(new Color([22, 254, 18  ]));
-
-                                        }
-                                    }
-                                    else{
-                                        if(typeof(startEndLayer.graphics[p].attributes.inZone)==="undefined"){
-                                            continue;
-                                        }
-                                        startEndLayer.graphics[p].symbol.setColor(new Color([0,0,204]));
-
-                                        if(startEndLayer.graphics[p].attributes.inZone === startEndLayer.graphics[p].attributes.outZone){
-                                            startEndLayer.graphics[p].symbol.outline.setColor(new Color([0,0,204]));
-                                        }
-                                    }
-                                }
-                                startEndLayer.refresh();
-
-                            });
-                        }
-                    }
-                });
 
                 if(myVar.GetValue() === 1){
                     currentIteration = Number($('#currentIteration').val())+1;
                     $('#currentIteration').val(currentIteration);
                 }
-                redrawClusters(newCentroid,graphicsLayer);
+                redrawClusters(newCentroid,graphicsLayer,1);
                 if($("#autoRun").is(':checked') === true){
                     myCounter.SetValue(1);
                 }
@@ -326,7 +267,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                     map.showZoomSlider();
                 }
             });
-            //run nextIteration
+            //run next iteration when the user click on 'Run next iteration'
             $("#nextIteration").click(function(){
                 $("#nextIteration").prop('disabled', true);
                 $("#RerunButton").prop('disabled', true);
@@ -336,7 +277,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 map.hideZoomSlider();
                 result = splitIntoGroups();
             });
-            //run autoRun
+            //continue running k-means iteration when the user toggle the button
             $("#autoRun").click(function(e, parameters) {
 
                 if($("#autoRun").is(':checked')){
@@ -349,13 +290,13 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                     result = splitIntoGroups();
                 }
             });
-            //generate geojson file
+            //generate geojson file and the user could plot it in QGIS using this result.geojson file
             $("#WantJson").click(function(){
                 let outputGeoJsonFile = outputGeojson(newCentroid);
                 let data = JSON.stringify(outputGeoJsonFile,undefined,4);
                 let blob = new Blob([data], {type: 'text/json'}),
                     a    = document.createElement('a');
-                a.download = "geojson1.geojson";
+                a.download = "result.geojson";
                 a.href = window.URL.createObjectURL(blob);
                 a.dataset.downloadurl =  ['text/json', a.download, a.href].join(':');
                 a.innerHTML = 'Download JSON';
@@ -433,10 +374,9 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                         }
                     }
                     //delete empty center
-                    newCentroid =newCentroid.filter(function(n){ return n;});
+                    newCentroid = newCentroid.filter(function(n){ return n;});
                 }
                 if(transitArray.length>0){
-
                     result = splitIntoGroups();
                 }
             }
@@ -474,7 +414,6 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                                 minDist = currentDist;
                             }
                         }
-
                         result[i] =group;
                     }
 
@@ -550,14 +489,14 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             return geojson;
         }
         //renew the map
-        function redrawClusters(newCentroid,graphicsLayer){
+
+        function redrawClusters(newCentroid,graphicsLayer,transparent,selectedLine){
             let maxWidth = 0;
             for(let p=0,l=newCentroid.length;p<l;p++){
                 if (newCentroid[p][4]>maxWidth){
                     maxWidth = newCentroid[p][4];
                 }
             }
-
             if(maxWidth/12<15){
                 ratio = 15
             }
@@ -578,11 +517,11 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 if(centroidWidth>0.05){
                     let advSymbol = new DirectionalLineSymbol({
                         style: SimpleLineSymbol.STYLE_SOLID,
-                        color: new Color([255,102, 102]),
+                        color: new Color([225,102, 102,transparent]),
                         width: centroidWidth,
                         directionSymbol: "arrow2",
                         directionPixelBuffer: 12,
-                        directionColor: new Color([204, 51, 0]),
+                        directionColor: new Color([204, 51, 0,transparent]),
                         directionSize: centroidWidth*5
                     });
                     let polylineJson = {
@@ -594,11 +533,81 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                     graphicsLayer.add(ag);
                 }
             }
+            connect.connect(graphicsLayer,"onClick",function(evt){
+
+                let clickedGroup = evt.graphic.attributes.Index;
+
+                if(typeof(clickedGroup)!=="undefined"){
+                    map.removeLayer(startEndLayer);
+                    startEndLayer = new GraphicsLayer({ id: "startEndLayer" });
+                    if(!alreadyClicked){
+                        graphicsLayer.clear()
+                        redrawClusters(newCentroid,graphicsLayer,0.1)
+                        var location = new Point(-113,53);
+                        map.centerAndZoom(map.extent.getCenter(),map.getZoom()-1);
+
+
+                        alreadyClicked = true;
+                    }
+
+                    //draw dots
+                    if($("#dots").is(':checked') === true){
+                        for (let h =0;h<transitArrayWithClusters[clickedGroup].length;h++){
+                            let orginDest = startEndDots(transitArrayWithClusters[clickedGroup][h]);
+                            startEndLayer.add(orginDest[0]);
+                            if(orginDest[1]!==null){
+                                startEndLayer.add(orginDest[1]);
+                            }
+                        }
+                    }
+                    //draw lines
+                    else if($("#lines").is(':checked') === true){
+                        for (let h2 =0;h2<transitArrayWithClusters[clickedGroup].length;h2++){
+                            let line = transitArrayWithClusters[clickedGroup][h2];
+                            let ag = startEndLines(line);
+                            if(ag !== null){
+                                startEndLayer.add(ag);
+                            }
+                        }
+                    }
+                    else{
+                        alert("Some error happens, please try to refresh the page!");
+                    }
+                    map.addLayer(startEndLayer);
+                    if($("#lines").is(':checked') === true){
+                        $(".clickableRow").on("click", function() {
+                            for(let p=0,m =startEndLayer.graphics.length;p<m;p++){
+
+                                if(startEndLayer.graphics[p].attributes.inZone === rowItems[0] &&startEndLayer.graphics[p].attributes.outZone ===rowItems[1] ){
+                                    startEndLayer.graphics[p].symbol.setColor(new Color([22, 254, 18  ]));
+                                    if(rowItems[0]===rowItems[1]){
+
+                                        startEndLayer.graphics[p].symbol.outline.setColor(new Color([22, 254, 18  ]));
+
+                                    }
+                                }
+                                else{
+                                    if(typeof(startEndLayer.graphics[p].attributes.inZone)==="undefined"){
+                                        continue;
+                                    }
+                                    startEndLayer.graphics[p].symbol.setColor(new Color([0,0,204]));
+
+                                    if(startEndLayer.graphics[p].attributes.inZone === startEndLayer.graphics[p].attributes.outZone){
+                                        startEndLayer.graphics[p].symbol.outline.setColor(new Color([0,0,204]));
+                                    }
+                                }
+                            }
+                            startEndLayer.refresh();
+
+                        });
+                    }
+                }
+            });
         }
         //if user select 'dots' to observe
         function startEndDots(line){
             //it will adjust the size based on current dataset automatically
-            var adjustedSize=line[4]*150/ratio;
+            var adjustedSize=line[4]*150/ratio; //you can change it based on the size you want
 
             let squareSymbol = new SimpleMarkerSymbol({
                 "color":[0,0,128,128],
@@ -729,8 +738,8 @@ function splitDataIntoTravelMatrix(uniqueTravelType,data){
     }
     return thisTravelMatrix
 }
-//this is a self defined Varaible
-//If the Varaible's name is changed, then it will call the onChange function.
+//this is a self-defined variable.
+//If the Variable's value is changed, then it will call the its onChange function.
 //you can treat it as a monitor
 function Variable(initVal, onChange)
 {

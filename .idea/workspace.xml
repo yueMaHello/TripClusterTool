@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7d2f36ef-7e8c-4ee7-b0af-4d4f5f07ade3" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/javascripts/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/javascripts/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/index.jade" beforeDir="false" afterPath="$PROJECT_DIR$/views/index.jade" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -20,8 +20,8 @@
       <file leaf-file-name="main.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/public/javascripts/main.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="178">
-              <caret line="559" lean-forward="true" selection-start-line="559" selection-end-line="559" />
+            <state relative-caret-position="201">
+              <caret line="547" lean-forward="true" selection-start-line="547" selection-end-line="547" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
               </folding>
@@ -29,38 +29,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="filterTrips.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/python/filterTrips.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1804">
-              <caret line="82" column="49" lean-forward="true" selection-start-line="82" selection-start-column="49" selection-end-line="82" selection-end-column="49" />
-            </state>
-          </provider>
+      <file leaf-file-name="fct-decode-omx" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bin/fct-decode-omx">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
-      <file leaf-file-name="index.jade" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/views/index.jade">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="616">
-              <caret line="28" selection-start-line="28" selection-end-line="28" />
-            </state>
-          </provider>
+      <file leaf-file-name="fct-run-server" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bin/fct-run-server">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file leaf-file-name="style.css" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/stylesheets/style.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret line="78" lean-forward="true" selection-start-line="78" selection-end-line="78" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="selection.css" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/stylesheets/selection.css">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="786">
-              <caret line="51" column="1" selection-start-line="51" selection-start-column="1" selection-end-line="51" selection-end-column="1" />
+            <state relative-caret-position="2222">
+              <caret line="101" column="26" lean-forward="true" selection-start-line="101" selection-start-column="26" selection-end-line="101" selection-end-column="26" />
             </state>
           </provider>
         </entry>
@@ -96,36 +79,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>process</find>
-      <find>console.log</find>
-      <find>console</find>
-      <find>all</find>
-      <find>demand</find>
-      <find>dot</find>
-      <find>splitDataIntoTravelMatrix</find>
-      <find>unique</find>
-      <find>processData</find>
-      <find>startEndDots</find>
-      <find>myVar</find>
-      <find>indexOfGroup</find>
-      <find>transitArrayWithClusters</find>
       <find>value</find>
       <find>indexofGroup</find>
       <find>total</find>
       <find>loading</find>
       <find>total t</find>
       <find>transit</find>
-      <find>MouseClickhighlightGraphic</find>
-      <find>rerun</find>
       <find>disconnect</find>
       <find>map</find>
       <find>projectionPromise</find>
       <find>result</find>
-      <find>print</find>
       <find>ratio=</find>
       <find>ratio =</find>
-      <find>selectedDistrict</find>
       <find>ratio</find>
+      <find>rerun</find>
+      <find>defaultClu</find>
+      <find>print</find>
+      <find>selectedDistrict</find>
+      <find>click</find>
+      <find>processData</find>
+      <find>selecteddis</find>
+      <find>selectedDistrictLayer</find>
+      <find>transparent</find>
+      <find>redraw</find>
+      <find>redrawClusters</find>
+      <find>grap</find>
+      <find>connect</find>
+      <find>highlight</find>
+      <find>MouseClickhighlightGraphic</find>
+      <find>already</find>
+      <find>graphicsLayer</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -149,9 +132,9 @@
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/bin/fct-run-server.js" />
         <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="$PROJECT_DIR$/views/index.jade" />
         <option value="$PROJECT_DIR$/routes/index.js" />
         <option value="$PROJECT_DIR$/public/python/filterTrips.py" />
+        <option value="$PROJECT_DIR$/views/index.jade" />
         <option value="$PROJECT_DIR$/public/javascripts/main.js" />
       </list>
     </option>
@@ -172,11 +155,11 @@
       <path value="$PROJECT_DIR$/package.json" />
     </packageJsonPaths>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="-6" />
-    <option name="y" value="16" />
-    <option name="width" value="1927" />
-    <option name="height" value="1055" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1936" />
+    <option name="height" value="1056" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -240,7 +223,18 @@
             <path>
               <item name="Trips_Cluster_Tool" type="b2602c69:ProjectViewProjectNode" />
               <item name="Trips_Cluster_Tool" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="vendor" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Trips_Cluster_Tool" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Trips_Cluster_Tool" type="462c0819:PsiDirectoryNode" />
               <item name="routes" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Trips_Cluster_Tool" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Trips_Cluster_Tool" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -307,21 +301,21 @@
       <workItem from="1539719147463" duration="4132000" />
       <workItem from="1540915024814" duration="26710000" />
       <workItem from="1541518862886" duration="3604000" />
-      <workItem from="1541528609905" duration="19778000" />
+      <workItem from="1541528609905" duration="47095000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="160721000" />
+    <option name="totallyTimeSpent" value="188038000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-6" y="16" width="1927" height="1055" extended-state="0" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20565149" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2046875" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5015625" side_tool="true" visible="true" weight="0.06871036" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5015625" side_tool="true" visible="true" weight="0.0686378" />
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info id="npm" order="2" side_tool="true" />
@@ -369,33 +363,10 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="1" />
+      <option name="time" value="2" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/public/javascripts/fct_version_info.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/index.jade">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1694">
-          <caret line="77" column="55" lean-forward="true" selection-start-line="77" selection-start-column="55" selection-end-line="77" selection-end-column="55" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/users.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="9" selection-start-line="9" selection-end-line="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/stylesheets/selection.css">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1122">
@@ -636,38 +607,51 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/bin/fct-decode-omx">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/public/stylesheets/selection.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="786">
-          <caret line="51" column="1" selection-start-line="51" selection-start-column="1" selection-end-line="51" selection-end-column="1" />
+        <state relative-caret-position="-534">
+          <caret line="23" column="23" lean-forward="true" selection-start-line="23" selection-start-column="23" selection-end-line="23" selection-end-column="23" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/stylesheets/style.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="78" lean-forward="true" selection-start-line="78" selection-end-line="78" />
+        <state relative-caret-position="2222">
+          <caret line="101" column="26" lean-forward="true" selection-start-line="101" selection-start-column="26" selection-end-line="101" selection-end-column="26" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/views/index.jade">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="616">
-          <caret line="28" selection-start-line="28" selection-end-line="28" />
+        <state relative-caret-position="479">
+          <caret line="88" column="75" selection-start-line="88" selection-start-column="75" selection-end-line="88" selection-end-column="75" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/python/filterTrips.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1804">
-          <caret line="82" column="49" lean-forward="true" selection-start-line="82" selection-start-column="49" selection-end-line="82" selection-end-column="49" />
+        <state relative-caret-position="176">
+          <caret line="35" column="66" lean-forward="true" selection-start-line="35" selection-start-column="66" selection-end-line="35" selection-end-column="66" />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/bin/fct-run-server.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="10" column="3" lean-forward="true" selection-start-line="10" selection-start-column="3" selection-end-line="10" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/fct-run-server">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/public/javascripts/main.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="178">
-          <caret line="559" lean-forward="true" selection-start-line="559" selection-end-line="559" />
+        <state relative-caret-position="201">
+          <caret line="547" lean-forward="true" selection-start-line="547" selection-end-line="547" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
           </folding>
