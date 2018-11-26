@@ -257,8 +257,6 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 //read the clustered lines
                 map.addLayer(graphicsLayer);
                 //each clusted line should have a group of single lines
-
-
                 if(myVar.GetValue() === 1){
                     currentIteration = Number($('#currentIteration').val())+1;
                     $('#currentIteration').val(currentIteration);
@@ -328,7 +326,6 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 //It gives a higher possibility to lines with a higher weight to be choosen as a initial cluster center
                 //the algorithm is based on https://medium.com/@peterkellyonline/weighted-random-selection-3ff222917eb6
                 if(selectedDistrict==='all'){
-
                     totalWeight=0;
                     transitArray = travelMatrix[selectedMatrix];
                     for(let i = 0, l = transitArray.length; i<l;i++){
@@ -498,7 +495,6 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             return geojson;
         }
         //renew the map
-
         function redrawClusters(newCentroid,graphicsLayer,transparent,selectedLine){
 
             let maxWidth = 0;
@@ -515,32 +511,10 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             }
 
             for(let j = 0,k= newCentroid.length;j<k;j++){
-                let centroidWidth;
-                centroidWidth = newCentroid[j][4]/ratio;
-                //convert geo position between different EPSG
-                //EPSG3776 can't plot on the map directly, needing to be converted to EPSG4326
-                const pointOrigin = new Point([newCentroid[j][0], newCentroid[j][1]], geoSpatialReference);
-                const pointDest = new Point([newCentroid[j][2], newCentroid[j][3]], geoSpatialReference);
-                const projectedPointOrigin = projection.project(pointOrigin, viewSpatialReference);
-                const projectedPointDest = projection.project(pointDest, viewSpatialReference);
-                //eliminate small lines which width <0.05
-                if(centroidWidth>0.05){
-                    let advSymbol = new DirectionalLineSymbol({
-                        style: SimpleLineSymbol.STYLE_SOLID,
-                        color: new Color([225,102, 102,transparent]),
-                        width: centroidWidth,
-                        directionSymbol: "arrow2",
-                        directionPixelBuffer: 12,
-                        directionColor: new Color([204, 51, 0,transparent]),
-                        directionSize: centroidWidth*5
-                    });
-                    let polylineJson = {
-                        "paths":[[ [projectedPointOrigin.x, projectedPointOrigin.y], [ projectedPointDest.x, projectedPointDest.y] ] ]
-                    };
-                    let infoTemplate = new InfoTemplate("District");
-                    let advPolyline = new Polyline(polylineJson,viewSpatialReference);
-                    let ag = new Graphic(advPolyline, advSymbol, {Index:newCentroid[j][5],Demand:newCentroid[j][4]}, infoTemplate);
-                    graphicsLayer.add(ag);
+                let ag = addDotsToLayer(newCentroid[j],graphicsLayer,transparent);
+                if(ag!==null){
+                    graphicsLayer.add(ag)
+
                 }
             }
             connect.connect(graphicsLayer,"onClick",function(evt){
@@ -548,8 +522,6 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 if(typeof(clickedGroup)!=="undefined"){
                     map.removeLayer(startEndLayer);
                     startEndLayer = new GraphicsLayer({ id: "startEndLayer" });
-
-
                     if(!alreadyClicked){
                         graphicsLayer.clear();
                         redrawClusters(newCentroid,graphicsLayer,0.2);
@@ -557,104 +529,71 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                         alreadyClicked = true;
                     }
                     //draw dots
-                    if($("#dots").is(':checked') === true){
-                        for (let h =0;h<transitArrayWithClusters[clickedGroup].length;h++){
-                            let orginDest = startEndDots(transitArrayWithClusters[clickedGroup][h]);
-                            startEndLayer.add(orginDest[0]);
-                            if(orginDest[1]!==null){
-                                startEndLayer.add(orginDest[1]);
-                            }
-                        }
 
-
-                    }
-                    //draw lines
-                    else if($("#lines").is(':checked') === true){
-                        for (let h2 =0;h2<transitArrayWithClusters[clickedGroup].length;h2++){
-                            let line = transitArrayWithClusters[clickedGroup][h2];
-                            let ag = startEndLines(line);
-                            if(ag !== null){
-                                startEndLayer.add(ag);
-                            }
+                    for (let h =0;h<transitArrayWithClusters[clickedGroup].length;h++){
+                        let orginDest = startEndDots(transitArrayWithClusters[clickedGroup][h]);
+                        startEndLayer.add(orginDest[0]);
+                        if(orginDest[1]!==null){
+                            startEndLayer.add(orginDest[1]);
                         }
-                    }
-                    else{
-                        alert("Some error happens, please try to refresh the page!");
                     }
                     if(selectedFlowLayer){
                         map.removeLayer(selectedFlowLayer);
                     }
                     selectedFlowLayer = new GraphicsLayer({ id: "selectedFlowLayer" });
-                    let line = newCentroid[clickedGroup];
-                    let centroidWidth = line[4]/ratio;
-                    let originPoint = new Point(line[0],line[1],geoSpatialReference);
-                    let destPoint = new Point(line[2],line[3],geoSpatialReference);
-                    let projectedPointOrigin = projection.project(originPoint, viewSpatialReference);
-                    let projectedPointDest = projection.project(destPoint, viewSpatialReference);
-                    let advSymbol = new DirectionalLineSymbol({
-                        style: SimpleLineSymbol.STYLE_SOLID,
-                        color: new Color([225,102, 102,1]),
-                        width: centroidWidth,
-                        directionSymbol: "arrow2",
-                        directionPixelBuffer: 12,
-                        directionColor: new Color([204, 51, 0,1]),
-                        directionSize: centroidWidth*5
-                    });
-                    let polylineJson = {
-                        "paths":[[ [projectedPointOrigin.x, projectedPointOrigin.y], [ projectedPointDest.x, projectedPointDest.y] ] ]
-
-                    };
-                    let infoTemplate = new InfoTemplate("District");
-                    let advPolyline = new Polyline(polylineJson,viewSpatialReference);
-                    let ag = new Graphic(advPolyline, advSymbol, {Index:newCentroid[clickedGroup][5],Demand:newCentroid[clickedGroup][4]}, infoTemplate);
+                    let ag = addDotsToLayer(newCentroid[clickedGroup],graphicsLayer,1);
                     selectedFlowLayer.add(ag);
                     map.addLayer(selectedFlowLayer);
-
                     map.addLayer(startEndLayer);
-                    if($("#lines").is(':checked') === true){
-                        $(".clickableRow").on("click", function() {
-                            for(let p=0,m =startEndLayer.graphics.length;p<m;p++){
 
-                                if(startEndLayer.graphics[p].attributes.inZone === rowItems[0] &&startEndLayer.graphics[p].attributes.outZone ===rowItems[1] ){
-                                    startEndLayer.graphics[p].symbol.setColor(new Color([22, 254, 18  ]));
-                                    if(rowItems[0]===rowItems[1]){
-
-                                        startEndLayer.graphics[p].symbol.outline.setColor(new Color([22, 254, 18  ]));
-
-                                    }
-                                }
-                                else{
-                                    if(typeof(startEndLayer.graphics[p].attributes.inZone)==="undefined"){
-                                        continue;
-                                    }
-                                    startEndLayer.graphics[p].symbol.setColor(new Color([0,0,204]));
-
-                                    if(startEndLayer.graphics[p].attributes.inZone === startEndLayer.graphics[p].attributes.outZone){
-                                        startEndLayer.graphics[p].symbol.outline.setColor(new Color([0,0,204]));
-                                    }
-                                }
-                            }
-                            startEndLayer.refresh();
-
-                        });
-                    }
                 }
             });
         }
-        //if user select 'dots' to observe
+        function addDotsToLayer(line,graphicsLayer,transparent){
+
+            let centroidWidth;
+            centroidWidth = line[4]/ratio;
+
+            //convert geo position between different EPSG
+            //EPSG3776 can't plot on the map directly, needing to be converted to EPSG4326
+            const pointOrigin = new Point([line[0], line[1]], geoSpatialReference);
+            const pointDest = new Point([line[2], line[3]], geoSpatialReference);
+            const projectedPointOrigin = projection.project(pointOrigin, viewSpatialReference);
+            const projectedPointDest = projection.project(pointDest, viewSpatialReference);
+            //eliminate small lines which width <0.05
+            if(centroidWidth>0.05){
+                let advSymbol = new DirectionalLineSymbol({
+                    style: SimpleLineSymbol.STYLE_SOLID,
+                    color: new Color([225,102, 102,transparent]),
+                    width: centroidWidth,
+                    directionSymbol: "arrow2",
+                    directionPixelBuffer: 12,
+                    directionColor: new Color([204, 51, 0,transparent]),
+                    directionSize: centroidWidth*5
+                });
+                let polylineJson = {
+                    "paths":[[ [projectedPointOrigin.x, projectedPointOrigin.y], [ projectedPointDest.x, projectedPointDest.y] ] ]
+                };
+                let infoTemplate = new InfoTemplate("District");
+                let advPolyline = new Polyline(polylineJson,viewSpatialReference);
+                let ag = new Graphic(advPolyline, advSymbol, {Index:line[5],Demand:line[4]}, infoTemplate);
+                return ag;
+            }
+            return null
+        }        //if user select 'dots' to observe
         function startEndDots(line){
             //it will adjust the size based on current dataset automatically
-            var adjustedSize=line[4]*150/ratio; //you can change it based on the size you want
+            var adjustedSize=line[4]*200/ratio; //you can change it based on the size you want
 
             let squareSymbol = new SimpleMarkerSymbol({
-                "color":[0,0,128,128],
+                "color":[0, 202, 53,128],
                 "size":adjustedSize,
                 "angle":0,
                 "xoffset":0,
                 "yoffset":0,
                 "type":"esriSMS",
                 "style":"esriSMSDiamond",
-                "outline":{"color":[0,0,128,255],
+                "outline":{"color":[	0, 202, 53,255],
                     "width":1,
                     "type":"esriSLS",
                     "style":"esriSLSSolid"
@@ -662,7 +601,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             });
 
             let symbolOrigin = new SimpleMarkerSymbol({
-                "color":[0,0,128,128],
+                "color":[0, 202, 53,128],
                 "size":adjustedSize,
                 "angle":0,
                 "xoffset":0,
@@ -670,7 +609,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 "type":"esriSMS",
                 "style":"esriSMSCircle",
                 "outline":{
-                    "color":[0,0,128,255],
+                    "color":[0, 202,53,255],
                     "width":1,
                     "type":"esriSLS",
                     "style":"esriSLSSolid"
@@ -704,58 +643,6 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 let originG = new Graphic(projectedPointOrigin, symbolOrigin, {}, null);
                 let destG = new Graphic(projectedPointDest, symbolDest, {}, null);
                 return [originG,destG];
-            }
-        }
-        //if user select 'lines' to observe
-        function startEndLines(line){
-            let centroidWidth;
-            centroidWidth = line[4]*50/ratio;
-            const pointOrigin = new Point([line[0],line[1]], geoSpatialReference);
-            const pointDest = new Point([line[2], line[3]], geoSpatialReference);
-            const projectedPointOrigin = projection.project(pointOrigin, viewSpatialReference);
-            const projectedPointDest = projection.project(pointDest, viewSpatialReference);
-            let infoTemplate = new InfoTemplate("Demand: ${value}","Origin Zone: ${inZone}<br/>Destination Zone:${outZone}");
-
-            if(centroidWidth*8>0.01){
-                if(line[5]===line[6]){
-                    let squareSymbol = new SimpleMarkerSymbol({
-                        "color":[0,0,128,128],
-                        "size":centroidWidth*6,
-                        "angle":0,
-                        "xoffset":0,
-                        "yoffset":0,
-                        "type":"esriSMS",
-                        "style":"esriSMSDiamond",
-                        "outline":{"color":[0,0,128,255],
-                            "width":1,
-                            "type":"esriSLS",
-                            "style":"esriSLSSolid"
-                        }
-                    });
-                    let originG = new Graphic(projectedPointOrigin,squareSymbol, {inZone: line[5],outZone:line[6],value:line[4]}, infoTemplate);
-                    return originG;
-                }
-                else{
-
-                    let advSymbol = new DirectionalLineSymbol({
-                        style: SimpleLineSymbol.STYLE_SOLID,
-                        color: new Color([0,0,204]),
-                        width: centroidWidth/2,
-                        directionSymbol: "arrow1",
-                        directionPixelBuffer: 12,
-                        directionColor: new Color([0,0,204]),
-                        directionSize: centroidWidth*2.5
-                    });
-                    let polylineJson = {
-                        "paths":[[ [projectedPointOrigin.x, projectedPointOrigin.y], [ projectedPointDest.x, projectedPointDest.y] ] ]
-                    };
-                    let advPolyline = new Polyline(polylineJson,viewSpatialReference);
-                    let ag = new Graphic(advPolyline, advSymbol, {inZone: line[5],outZone:line[6],value:line[4]}, infoTemplate);
-                    return ag;
-                }
-            }
-            else{
-                return null;
             }
         }
     });

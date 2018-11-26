@@ -17,12 +17,9 @@ html
         link(rel="stylesheet" href="http://js.arcgis.com/3.25/dijit/themes/claro/claro.css")
     body
         block content
-
           h1(id = 'title')
-
           div(id = "map")
             div(id="viewDiv")
-
           div(id = "legendDiv")
             fieldset(data-role='controlgroup')
               legend Legend
@@ -30,10 +27,6 @@ html
               div(id = "arrow-left2" class="clustered-line arrow-left2")
               div(class = "clustered-line" id = "clustered-line")
                 Thing Clustered flow
-              br
-              div(id = "arrow-left" class="single-line arrow-left")
-              div(class = "single-line" id = "single-line")
-                Thing Single flow
               br
               input(type = "text",id="circleOrigin")
               Thing Origin point
@@ -65,15 +58,6 @@ html
                       label(class="switch")
                          input(type="checkbox" id = "autoRun")
                          span(class="slider")
-
-
-                div(class = "controlPanel")
-                  fieldset(data-role='radiogroup')
-                    label(for='clusters') Single Flow Format:
-                      input(type="radio" name="dotsOrLines" id="dots" checked)
-                      Thing Dots
-                      input(type="radio" name="dotsOrLines" id="lines" )
-                      Thing Lines
                 div(class = "controlPanel")
                     fieldset(data-role='radiogroup')
                         label(for='clusters') Data Set:
