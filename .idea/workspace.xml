@@ -20,8 +20,8 @@
       <file leaf-file-name="main.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/public/javascripts/main.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="201">
-              <caret line="547" lean-forward="true" selection-start-line="547" selection-end-line="547" />
+            <state relative-caret-position="553">
+              <caret line="152" column="25" lean-forward="true" selection-start-line="152" selection-start-column="25" selection-end-line="152" selection-end-column="25" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
               </folding>
@@ -37,6 +37,15 @@
       <file leaf-file-name="fct-run-server" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bin/fct-run-server">
           <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file leaf-file-name="index.jade" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/views/index.jade">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1034">
+              <caret line="86" column="31" lean-forward="true" selection-start-line="86" selection-start-column="31" selection-end-line="86" selection-end-column="31" />
+            </state>
+          </provider>
         </entry>
       </file>
       <file leaf-file-name="style.css" pinned="false" current-in-tab="false">
@@ -79,12 +88,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>value</find>
-      <find>indexofGroup</find>
-      <find>total</find>
-      <find>loading</find>
-      <find>total t</find>
-      <find>transit</find>
       <find>disconnect</find>
       <find>map</find>
       <find>projectionPromise</find>
@@ -100,15 +103,21 @@
       <find>processData</find>
       <find>selecteddis</find>
       <find>selectedDistrictLayer</find>
-      <find>transparent</find>
       <find>redraw</find>
-      <find>redrawClusters</find>
       <find>grap</find>
       <find>connect</find>
-      <find>highlight</find>
       <find>MouseClickhighlightGraphic</find>
       <find>already</find>
       <find>graphicsLayer</find>
+      <find>transparent</find>
+      <find>alreadyClicked</find>
+      <find>redrawClusters</find>
+      <find>zoom</find>
+      <find>highlight</find>
+      <find>direction</find>
+      <find>console</find>
+      <find>0.1</find>
+      <find>50</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -134,8 +143,8 @@
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/routes/index.js" />
         <option value="$PROJECT_DIR$/public/python/filterTrips.py" />
-        <option value="$PROJECT_DIR$/views/index.jade" />
         <option value="$PROJECT_DIR$/public/javascripts/main.js" />
+        <option value="$PROJECT_DIR$/views/index.jade" />
       </list>
     </option>
   </component>
@@ -155,7 +164,7 @@
       <path value="$PROJECT_DIR$/package.json" />
     </packageJsonPaths>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
     <option name="width" value="1936" />
@@ -301,15 +310,15 @@
       <workItem from="1539719147463" duration="4132000" />
       <workItem from="1540915024814" duration="26710000" />
       <workItem from="1541518862886" duration="3604000" />
-      <workItem from="1541528609905" duration="47095000" />
+      <workItem from="1541528609905" duration="54196000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="188038000" />
+    <option name="totallyTimeSpent" value="195139000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2046875" />
@@ -624,13 +633,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/views/index.jade">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="479">
-          <caret line="88" column="75" selection-start-line="88" selection-start-column="75" selection-end-line="88" selection-end-column="75" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/python/filterTrips.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="176">
@@ -648,10 +650,17 @@
     <entry file="file://$PROJECT_DIR$/bin/fct-run-server">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/views/index.jade">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1034">
+          <caret line="86" column="31" lean-forward="true" selection-start-line="86" selection-start-column="31" selection-end-line="86" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/public/javascripts/main.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="201">
-          <caret line="547" lean-forward="true" selection-start-line="547" selection-end-line="547" />
+        <state relative-caret-position="553">
+          <caret line="152" column="25" lean-forward="true" selection-start-line="152" selection-start-column="25" selection-end-line="152" selection-end-column="25" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
           </folding>

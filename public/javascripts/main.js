@@ -38,7 +38,7 @@ let totalCsvFileTitle = {csvFileUrl:"./data/result_total.csv",
 let map;
 let currentIteration = 1;//initialization
 let result;
-let clusterNumber=50;//initialization
+let clusterNumber=30;//initialization
 let newCentroid;
 let transitArray=[];
 let clusters = [];
@@ -53,6 +53,7 @@ let geoJsonLayer1 ;
 let graphicsLayer;
 let startEndLayer;
 let selectedDistrictLayer;
+let selectedFlowLayer;
 let totalWeight;
 let sumOfTransitArray;
 let travelMatrix={};
@@ -142,6 +143,10 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 mode: FeatureLayer.MODE_SNAPSHOT,
                 outFields: ["*"],
             });
+            let hydroLayer = new FeatureLayer("https://services8.arcgis.com/FCQ1UtL7vfUUEwH7/arcgis/rest/services/edmontonHydro/FeatureServer/0",{
+                mode: FeatureLayer.MODE_SNAPSHOT,
+                outFields: ["*"],
+            });
 
             //map toggle
             let toggle = new BasemapToggle({
@@ -153,6 +158,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             map.on("load", function () {
                 map.disableDoubleClickZoom();
                 map.addLayer(lrtFeatureLayer);
+                map.addLayer(hydroLayer)
             });
             geoJsonLayer1 = new GeojsonLayer({
                 url:"../data/geoInfo/district1669.geojson",
@@ -162,8 +168,10 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             map.addLayer(geoJsonLayer1);
             //cluster data when clicking on a district zone
             function MouseClickhighlightGraphic(evt){
-                alreadyClicked = false;
                 map.removeLayer(selectedDistrictLayer);
+                if(selectedFlowLayer){
+                    map.removeLayer(selectedFlowLayer);
+                }
                 selectedDistrictLayer = new GraphicsLayer({ id: "selectedDistrictLayer" });
                 selectedDistrict =evt.graphic.attributes.District;
 
@@ -241,6 +249,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             //myVar is like a monitor monitoring the Kmeans process
             //After each iteration of Kmeans, myVar will change the Map
             myVar = new Variable(10, function(){
+                alreadyClicked = false;
                 //clean the map
                 map.removeLayer(graphicsLayer);
                 map.removeLayer(startEndLayer);
@@ -491,6 +500,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
         //renew the map
 
         function redrawClusters(newCentroid,graphicsLayer,transparent,selectedLine){
+
             let maxWidth = 0;
             for(let p=0,l=newCentroid.length;p<l;p++){
                 if (newCentroid[p][4]>maxWidth){
@@ -534,22 +544,18 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 }
             }
             connect.connect(graphicsLayer,"onClick",function(evt){
-
                 let clickedGroup = evt.graphic.attributes.Index;
-
                 if(typeof(clickedGroup)!=="undefined"){
                     map.removeLayer(startEndLayer);
                     startEndLayer = new GraphicsLayer({ id: "startEndLayer" });
+
+
                     if(!alreadyClicked){
-                        graphicsLayer.clear()
-                        redrawClusters(newCentroid,graphicsLayer,0.1)
-                        var location = new Point(-113,53);
+                        graphicsLayer.clear();
+                        redrawClusters(newCentroid,graphicsLayer,0.2);
                         map.centerAndZoom(map.extent.getCenter(),map.getZoom()-1);
-
-
                         alreadyClicked = true;
                     }
-
                     //draw dots
                     if($("#dots").is(':checked') === true){
                         for (let h =0;h<transitArrayWithClusters[clickedGroup].length;h++){
@@ -559,6 +565,8 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                                 startEndLayer.add(orginDest[1]);
                             }
                         }
+
+
                     }
                     //draw lines
                     else if($("#lines").is(':checked') === true){
@@ -573,6 +581,35 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                     else{
                         alert("Some error happens, please try to refresh the page!");
                     }
+                    if(selectedFlowLayer){
+                        map.removeLayer(selectedFlowLayer);
+                    }
+                    selectedFlowLayer = new GraphicsLayer({ id: "selectedFlowLayer" });
+                    let line = newCentroid[clickedGroup];
+                    let centroidWidth = line[4]/ratio;
+                    let originPoint = new Point(line[0],line[1],geoSpatialReference);
+                    let destPoint = new Point(line[2],line[3],geoSpatialReference);
+                    let projectedPointOrigin = projection.project(originPoint, viewSpatialReference);
+                    let projectedPointDest = projection.project(destPoint, viewSpatialReference);
+                    let advSymbol = new DirectionalLineSymbol({
+                        style: SimpleLineSymbol.STYLE_SOLID,
+                        color: new Color([225,102, 102,1]),
+                        width: centroidWidth,
+                        directionSymbol: "arrow2",
+                        directionPixelBuffer: 12,
+                        directionColor: new Color([204, 51, 0,1]),
+                        directionSize: centroidWidth*5
+                    });
+                    let polylineJson = {
+                        "paths":[[ [projectedPointOrigin.x, projectedPointOrigin.y], [ projectedPointDest.x, projectedPointDest.y] ] ]
+
+                    };
+                    let infoTemplate = new InfoTemplate("District");
+                    let advPolyline = new Polyline(polylineJson,viewSpatialReference);
+                    let ag = new Graphic(advPolyline, advSymbol, {Index:newCentroid[clickedGroup][5],Demand:newCentroid[clickedGroup][4]}, infoTemplate);
+                    selectedFlowLayer.add(ag);
+                    map.addLayer(selectedFlowLayer);
+
                     map.addLayer(startEndLayer);
                     if($("#lines").is(':checked') === true){
                         $(".clickableRow").on("click", function() {
