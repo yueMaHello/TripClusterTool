@@ -38,17 +38,13 @@ html
           div(id = "blockContainer")
             div(id="infoDiv")
               div(id = "containerw")
-                fieldset(id = "containerField")
-                  input( type="Button" id = "WantJson" value="Create a GeoJson file ")
+
                 div(class = "controlPanel" data-role='fieldcontain')
                   fieldset(data-role='controlgroup')
                     label(for='clusters') Number Of Clusters:
                        input(id='clusters',type='text',value='',name='clusters' size="2")
                        //Set the default cluster number to 30
                        input(type="range" min="10" max="200" value="30"  id="clusterRange")
-                    label(for='clusters') &nbsp&nbsp&nbsp&nbsp Number Of Threads:
-                       input(id = 'threadNumber',type = 'text',value = '4', size = '2')
-                       input(type="range" min="2" max="10" value ="4" id="threadRange")
                        input( type="Button" id = "RerunButton" value="Run again ")
                 div(class = "controlPanel")
                   fieldset(data-role='controlgroup')

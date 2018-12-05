@@ -128,9 +128,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             $("#clusterRange").change(function(){
                 $("#clusters").val(this.value);
             });
-            $("#threadRange").change(function(){
-                $("#threadNumber").val(this.value);
-            });
+
             //map initialization
             map = new Map("map", {
                 center: [-113.4947, 53.5437],
@@ -297,18 +295,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                     result = splitIntoGroups();
                 }
             });
-            //generate geojson file and the user could plot it in QGIS using this result.geojson file
-            $("#WantJson").click(function(){
-                let outputGeoJsonFile = outputGeojson(newCentroid);
-                let data = JSON.stringify(outputGeoJsonFile,undefined,4);
-                let blob = new Blob([data], {type: 'text/json'}),
-                    a    = document.createElement('a');
-                a.download = "result.geojson";
-                a.href = window.URL.createObjectURL(blob);
-                a.dataset.downloadurl =  ['text/json', a.download, a.href].join(':');
-                a.innerHTML = 'Download JSON';
-                a.click();
-            });
+
             //Rerun kmeans
             $("#RerunButton").click(function(){
                 $("#currentIteration").val("0");
@@ -395,7 +382,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 transitArrayWithClusters[JSON.stringify(m)] = [];
             }
             //multithread calculation
-            let num_threads = Number($("#threadNumber").val());
+            let num_threads = 1;
             let c = 0;
             let MT = new Multithread(num_threads);
             //in each thread
