@@ -4,8 +4,6 @@
     <list default="true" id="7d2f36ef-7e8c-4ee7-b0af-4d4f5f07ade3" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/javascripts/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/javascripts/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/stylesheets/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/stylesheets/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/index.jade" beforeDir="false" afterPath="$PROJECT_DIR$/views/index.jade" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -22,8 +20,8 @@
       <file leaf-file-name="main.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/public/javascripts/main.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="295">
-              <caret line="485" lean-forward="true" selection-start-line="485" selection-end-line="485" />
+            <state relative-caret-position="729">
+              <caret line="320" column="34" lean-forward="true" selection-start-line="320" selection-start-column="34" selection-end-line="320" selection-end-column="34" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
               </folding>
@@ -125,10 +123,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>graphicsLayer</find>
-      <find>transparent</find>
-      <find>alreadyClicked</find>
-      <find>redrawClusters</find>
       <find>zoom</find>
       <find>highlight</find>
       <find>direction</find>
@@ -152,9 +146,13 @@
       <find>title</find>
       <find>infodiv</find>
       <find>click</find>
-      <find>connect</find>
-      <find>redraw</find>
       <find>geojson</find>
+      <find>connection</find>
+      <find>redraw</find>
+      <find>connections</find>
+      <find>connect</find>
+      <find>transitArrayWithClusters</find>
+      <find>#rerun</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -354,7 +352,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="201411000" />
+    <option name="totallyTimeSpent" value="203964000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-5" y="0" width="1926" height="1055" extended-state="0" />
@@ -700,8 +698,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/javascripts/main.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="295">
-          <caret line="485" lean-forward="true" selection-start-line="485" selection-end-line="485" />
+        <state relative-caret-position="729">
+          <caret line="320" column="34" lean-forward="true" selection-start-line="320" selection-start-column="34" selection-end-line="320" selection-end-column="34" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
           </folding>

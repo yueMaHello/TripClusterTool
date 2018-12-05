@@ -300,7 +300,12 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             $("#RerunButton").click(function(){
                 $("#currentIteration").val("0");
                 clusterNumber =Number($("#clusters").val());
-                processData(selectedMatrix,clusterNumber,1);
+                if(Number.isInteger(clusterNumber)&&clusterNumber>0){
+                    processData(selectedMatrix,clusterNumber,1);
+                }
+                else{
+                    alert('Please enter a non-zero positive integer!')
+                }
             });
             //process kmeans
             function processData(selectedMatrix,clusterNumber,iteration) {
@@ -383,11 +388,10 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             }
             //multithread calculation
             let num_threads = 1;
-            let c = 0;
             let MT = new Multithread(num_threads);
             //in each thread
             let funcInADifferentThread = MT.process(
-                function(newCentroid,transitArray,index){
+                function(newCentroid,transitArray){
 
                     let result = new Array(transitArray.length);
                     for(let i=0,l1=transitArray.length;i<l1;i++){
@@ -404,42 +408,28 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
 
                             if(minDist>currentDist){
                                 group = j;
-                                minDist = currentDist;
+                                minDist = currentDist;1
                             }
                         }
                         result[i] =group;
                     }
 
-                    return [index,result];
+                    return result;
                 },
                 //result after the thread finishing calculation
                 function(r) {
                     //c is counter to count how many threads have finished
-                    c+=1;
-                    for(let t4=0;t4<GroupArray[r[0]].length;t4++){
+                    for(let t4=0;t4<transitArray.length;t4++){
                         //fill the transitArrayWithClusters array
-                        transitArrayWithClusters[JSON.stringify(r[1][t4])].push(GroupArray[r[0]][t4]);
+                        transitArrayWithClusters[JSON.stringify(r[t4])].push(transitArray[t4]);
                     }
-                    if(c=== num_threads){
-
-                        //all threads have finished
-                        newCentroid = findNewCentroid(transitArrayWithClusters);
-                        //call function stored in myVar
-                        myVar.SetValue(1);
-                    }
+                    //all threads have finished
+                    newCentroid = findNewCentroid(transitArrayWithClusters);
+                    //call function stored in myVar
+                    myVar.SetValue(1);
                 }
             );
-            //split the array into 'num_threads' groups
-            let averageLength = transitArray.length/num_threads;
-            let GroupArray = new Array(num_threads);
-
-            for(let i = 0; i<num_threads; i++){
-                GroupArray[i] = transitArray.slice(averageLength*i,averageLength*(i+1));
-            }
-            //call each threads
-            for(let j=0; j<num_threads;j++){
-                funcInADifferentThread(newCentroid,GroupArray[j],j);
-            }
+            funcInADifferentThread(newCentroid,transitArray,0);
         }
         //after spliting into groups, calculate the new center for each group
         function findNewCentroid(transitArrayWithClusters){
@@ -462,25 +452,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             }
             return newCentroid;
         }
-        //generate geojson file which can be used in QGIS
-        function outputGeojson(centroids){
-            let geojson =
-                {"name":"NewFeatureType",
-                    "type":"FeatureCollection",
-                    "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::3401" } },
-                    "features":[]};
-            for(let i = 0,k=centroids.length;i<k;i++){
-                let singleRecord = {};
-                singleRecord.type = "Feature";
-                singleRecord.geometry={};
-                singleRecord.properties= {};
-                singleRecord.geometry.type = "LineString";
-                singleRecord.geometry.coordinates =[[centroids[i][0],centroids[i][1]],[centroids[i][2],centroids[i][3]]];
-                singleRecord.properties.weight = centroids[i][4];
-                geojson.features.push(singleRecord);
-            }
-            return geojson;
-        }
+
         //renew the map
         function redrawClusters(newCentroid,graphicsLayer,transparent,selectedLine){
 
