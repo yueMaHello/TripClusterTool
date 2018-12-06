@@ -157,6 +157,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             toggle.startup();
             //add geojson district layer
             map.on("load", function () {
+                map.infoWindow.resize(100,100);
                 map.disableDoubleClickZoom();
                 map.addLayer(lrtFeatureLayer);
                 map.addLayer(hydroLayer)
@@ -485,8 +486,11 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 }
             }
             connect.connect(graphicsLayer,"onClick",function(evt){
+
                 console.log(evt);
                 let clickedGroup = evt.graphic.attributes.index || evt.graphic.symbol.index;
+                let amount = evt.graphic.attributes.demand || evt.graphic.symbol.demand;
+                addPoint(evt,amount);
                 if(typeof(clickedGroup)!=="undefined"){
                     map.removeLayer(startEndLayer);
                     startEndLayer = new GraphicsLayer({ id: "startEndLayer" });
@@ -516,6 +520,15 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 }
             });
         }
+
+        function addPoint(evt,number) {
+
+            map.infoWindow.setTitle("Demand");
+            map.infoWindow.setContent(
+                 ""+ number+""
+            );
+            map.infoWindow.show(evt.mapPoint, map.getInfoWindowAnchor(evt.screenPoint));
+        }
         function addDirectionLineToLayer(line,graphicsLayer,transparent){
 
             let centroidWidth;
@@ -534,6 +547,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                     color: new Color([225,102, 102,transparent]),
                     width: centroidWidth,
                     index: line[5],
+                    demand: line[4],
                     directionSymbol: "arrow2",
                     directionPixelBuffer: 12,
                     directionColor: new Color([204, 51, 0,transparent]),
@@ -542,9 +556,9 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 let polylineJson = {
                     "paths":[[ [projectedPointOrigin.x, projectedPointOrigin.y], [ projectedPointDest.x, projectedPointDest.y] ] ]
                 };
-                let infoTemplate = new InfoTemplate("District");
+
                 let advPolyline = new Polyline(polylineJson,viewSpatialReference);
-                let ag = new Graphic(advPolyline, advSymbol, {Demand:line[4]}, infoTemplate);
+                let ag = new Graphic(advPolyline, advSymbol, {}, null);
                 return ag;
             }
             return null
