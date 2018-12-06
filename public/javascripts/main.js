@@ -497,7 +497,6 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                         alreadyClicked = true;
                     }
                     //draw dots
-
                     for (let h =0;h<transitArrayWithClusters[clickedGroup].length;h++){
                         let orginDest = startEndDots(transitArrayWithClusters[clickedGroup][h]);
                         startEndLayer.add(orginDest[0]);
