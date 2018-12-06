@@ -250,6 +250,9 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             //myVar is like a monitor monitoring the Kmeans process
             //After each iteration of Kmeans, myVar will change the Map
             myVar = new Variable(10, function(){
+                if(selectedFlowLayer){
+                    map.removeLayer(selectedFlowLayer);
+                }
                 alreadyClicked = false;
                 //clean the map
                 map.removeLayer(graphicsLayer);
@@ -311,7 +314,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 }
             });
             //process kmeans
-            function processData(selectedMatrix,clusterNumber,iteration) {
+            function processData(selectedMatrix,clusterNumber) {
                 if(selectedFlowLayer){
                     map.removeLayer(selectedFlowLayer);
                 }
@@ -542,7 +545,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 };
                 let infoTemplate = new InfoTemplate("District");
                 let advPolyline = new Polyline(polylineJson,viewSpatialReference);
-                let ag = new Graphic(advPolyline, advSymbol, {Index:line[5],Demand:line[4]}, infoTemplate);
+                let ag = new Graphic(advPolyline, advSymbol, {Demand:line[4]}, infoTemplate);
                 return ag;
             }
             return null
