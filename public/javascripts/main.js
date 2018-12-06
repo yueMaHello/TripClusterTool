@@ -10,7 +10,7 @@ If you have to change the code, please be very careful!!!
 //show the loading symbol
 $('#wait').show();
 //initialize title
-$('#title').text('All Trip Cluster Analysis Tool');
+$('#title').text('Trip Cluster Tool');
 //If your csvfiles' title changes, just change values in this Object.
 //You don't need to change other code
 let transitCsvFileTitle = {csvFileUrl:"./data/result_transit.csv",
@@ -135,6 +135,9 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 zoom: 10,
                 basemap: "gray",
                 minZoom: 3
+            });
+            map.on('click',function(e){
+                console.log(e)
             });
             //LRT layer
             let lrtFeatureLayer = new FeatureLayer("https://services8.arcgis.com/FCQ1UtL7vfUUEwH7/arcgis/rest/services/LRT/FeatureServer/0",{
@@ -309,7 +312,9 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             });
             //process kmeans
             function processData(selectedMatrix,clusterNumber,iteration) {
-
+                if(selectedFlowLayer){
+                    map.removeLayer(selectedFlowLayer);
+                }
                 $("#nextIteration").prop('disabled', true);
                 $("#RerunButton").prop('disabled', true);
                 $("#autoRun").prop('disabled', true);
@@ -470,14 +475,15 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             }
 
             for(let j = 0,k= newCentroid.length;j<k;j++){
-                let ag = addDotsToLayer(newCentroid[j],graphicsLayer,transparent);
+                let ag = addDirectionLineToLayer(newCentroid[j],graphicsLayer,transparent);
                 if(ag!==null){
                     graphicsLayer.add(ag)
 
                 }
             }
             connect.connect(graphicsLayer,"onClick",function(evt){
-                let clickedGroup = evt.graphic.attributes.Index;
+                console.log(evt);
+                let clickedGroup = evt.graphic.attributes.index || evt.graphic.symbol.index;
                 if(typeof(clickedGroup)!=="undefined"){
                     map.removeLayer(startEndLayer);
                     startEndLayer = new GraphicsLayer({ id: "startEndLayer" });
@@ -500,7 +506,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                         map.removeLayer(selectedFlowLayer);
                     }
                     selectedFlowLayer = new GraphicsLayer({ id: "selectedFlowLayer" });
-                    let ag = addDotsToLayer(newCentroid[clickedGroup],graphicsLayer,1);
+                    let ag = addDirectionLineToLayer(newCentroid[clickedGroup],graphicsLayer,1);
                     selectedFlowLayer.add(ag);
                     map.addLayer(selectedFlowLayer);
                     map.addLayer(startEndLayer);
@@ -508,7 +514,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 }
             });
         }
-        function addDotsToLayer(line,graphicsLayer,transparent){
+        function addDirectionLineToLayer(line,graphicsLayer,transparent){
 
             let centroidWidth;
             centroidWidth = line[4]/ratio;
@@ -525,6 +531,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                     style: SimpleLineSymbol.STYLE_SOLID,
                     color: new Color([225,102, 102,transparent]),
                     width: centroidWidth,
+                    index: line[5],
                     directionSymbol: "arrow2",
                     directionPixelBuffer: 12,
                     directionColor: new Color([204, 51, 0,transparent]),
