@@ -391,6 +391,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
         //calculate the distance between each line and each cluster center.
         //split lines into n cluster groups
         function splitIntoGroups(){
+            map.infoWindow.hide();
             transitArrayWithClusters=[];
             for(let m=0,l=newCentroid.length;m<l;m++){
                 transitArrayWithClusters[JSON.stringify(m)] = [];
