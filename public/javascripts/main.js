@@ -498,7 +498,6 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                     if(!alreadyClicked){
                         graphicsLayer.clear();
                         redrawClusters(newCentroid,graphicsLayer,0.2);
-                        map.centerAndZoom(map.extent.getCenter(),map.getZoom()-1);
                         alreadyClicked = true;
                     }
                     //draw dots
