@@ -336,8 +336,8 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 else{
                     totalWeight=0;
                     transitArray = [];
-                    for(let d in travelMatrix[selectedMatrix]){
-                        // console.log(selectedDistrict)
+                    for(let d =0;d<travelMatrix[selectedMatrix].length;d++){
+
                         if(Number(travelMatrix[selectedMatrix][d][8]) === Number(selectedDistrict)){
                             transitArray.push(travelMatrix[selectedMatrix][d]);
                         }
@@ -418,7 +418,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
 
                             if(minDist>currentDist){
                                 group = j;
-                                minDist = currentDist;1
+                                minDist = currentDist;
                             }
                         }
                         result[i] =group;
@@ -444,7 +444,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
         //after spliting into groups, calculate the new center for each group
         function findNewCentroid(transitArrayWithClusters){
             newCentroid = [];
-            for(let key in transitArrayWithClusters){
+            for(let key=0; key<transitArrayWithClusters.length;key++){
                 let weight = 0,dest_x = 0,dest_y = 0,orig_x = 0,orig_y = 0;
                 let groupMember = transitArrayWithClusters[key];
                 for(let n =0,l = groupMember.length; n<l;n++){
@@ -566,7 +566,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
         }        //if user select 'dots' to observe
         function startEndDots(line){
             //it will adjust the size based on current dataset automatically
-            var adjustedSize=line[4]*200/ratio; //you can change it based on the size you want
+            let adjustedSize=line[4]*200/ratio; //you can change it based on the size you want
 
             let squareSymbol = new SimpleMarkerSymbol({
                 "color":[0, 202, 53,128],
@@ -635,7 +635,7 @@ function splitDataIntoTravelMatrix(uniqueTravelType,data){
     for(let i=0;i<uniqueTravelType.length;i++){
         let thisTravelType = uniqueTravelType[i];
         let dataOfThisTravelType = [];
-        for(let j in data){
+        for(let j=0;j<data.length;j++){
             if(data[j].Purpose_Category === thisTravelType){
                 let thisDataArray = [Number(data[j][transitCsvFileTitle.origin_x]),Number(data[j][transitCsvFileTitle.origin_y]),Number(data[j][transitCsvFileTitle.dest_x]),Number(data[j][transitCsvFileTitle.dest_y]),Number(data[j][transitCsvFileTitle.weight]),data[j][transitCsvFileTitle.origin_zone],data[j][transitCsvFileTitle.dest_zone],data[j][transitCsvFileTitle.origin_district],data[j][transitCsvFileTitle.dest_district]];
                 dataOfThisTravelType.push(thisDataArray);
