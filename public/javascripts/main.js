@@ -344,6 +344,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                             transitArray.push(travelMatrix[selectedMatrix][d]);
                         }
                     }
+
                     if(!selectedMatrix){
                         alert("You haven't select any travel type!");
                     }
@@ -351,7 +352,8 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
 
                         alert('Please double click on a zone!');
                     }
-                    else if(transitArray.length ===0){
+
+                    else if(selectedDistrict !=='district'&&transitArray.length ===0){
 
                         alert('No travel in this zone!');
                         return;
