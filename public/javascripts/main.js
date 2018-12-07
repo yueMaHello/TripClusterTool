@@ -11,6 +11,7 @@ If you have to change the code, please be very careful!!!
 $('#wait').show();
 //initialize title
 $('#title').text('Trip Cluster Tool');
+
 //If your csvfiles' title changes, just change values in this Object.
 //You don't need to change other code
 let transitCsvFileTitle = {csvFileUrl:"./data/result_transit.csv",
@@ -62,13 +63,14 @@ let connections = [];
 let totalDataMatrix =null;
 let transitDataMatrix = null;
 let alreadyClicked = false;
+let whetherHadATour = false;
 //get esri resource
 require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/GraphicsLayer", "esri/graphic", "esri/geometry/Polyline", "esri/geometry/Polygon", "../externalJS/DirectionalLineSymbol.js","esri/layers/FeatureLayer","../externalJS/geojsonlayer.js",
         "esri/symbols/SimpleMarkerSymbol",  "esri/symbols/SimpleLineSymbol", "esri/symbols/SimpleFillSymbol", "esri/SpatialReference","esri/config", "esri/request",
-        "dojo/ready","dojo/_base/connect", "dojo/dom", "dojo/on","esri/dijit/BasemapToggle","esri/dijit/Scalebar","esri/geometry/Point","esri/InfoTemplate",   "esri/geometry/Extent"],
+        "dojo/ready","dojo/_base/connect", "dojo/dom", "dojo/on","esri/dijit/BasemapToggle","esri/dijit/Scalebar","esri/geometry/Point"],
     function (projection,Map, Color, GraphicsLayer, Graphic, Polyline, Polygon, DirectionalLineSymbol,FeatureLayer,GeojsonLayer,
               SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol,SpatialReference, config, request,
-              ready, connect,dom, on,BasemapToggle,Scalebar,Point,InfoTemplate,Extent) {
+              ready, connect,dom, on,BasemapToggle,Scalebar,Point) {
         ready(function () {
             //projection is used to transfer data between different SpatialReference
             if (!projection.isSupported()) {
@@ -93,9 +95,9 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
 
             //use d3 to read files
             d3.queue()
-              .defer(d3.csv,transitCsvFileTitle.csvFileUrl)
-              .defer(d3.csv,totalCsvFileTitle.csvFileUrl)
-              .await(function(error,transitdata,totaldata) {
+            .defer(d3.csv,transitCsvFileTitle.csvFileUrl)
+            .defer(d3.csv,totalCsvFileTitle.csvFileUrl)
+            .await(function(error,transitdata,totaldata) {
                 let uniqueTravelType = transitdata.map(transitdata => transitdata.Purpose_Category)
                     .filter((value, index, self) => self.indexOf(value) === index);
                 //convert the data into desired Json format
@@ -345,7 +347,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                     if(!selectedMatrix){
                         alert("You haven't select any travel type!");
                     }
-                    else if(selectedDistrict ==='district'){
+                    else if(selectedDistrict ==='district' && !whetherHadATour){
 
                         alert('Please double click on a zone!');
                     }
@@ -488,7 +490,6 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             }
             connect.connect(graphicsLayer,"onClick",function(evt){
 
-                console.log(evt);
                 let clickedGroup = evt.graphic.attributes.index || evt.graphic.symbol.index;
                 let amount = evt.graphic.attributes.demand || evt.graphic.symbol.demand;
                 addPoint(evt,amount);
@@ -661,3 +662,64 @@ function Variable(initVal, onChange)
         this.onChange();
     };
 }
+
+$('#tour').on('click',function(e){
+    whetherHadATour = true;
+    let intro1 = introJs();
+    intro1.setOptions({
+        tooltipPosition : 'top',
+        steps: [
+            {
+                element: '#title',
+                intro: ' Welcome to Trip Cluster Tool! The application uses a weighted K-means clustering method to cluster trips.',
+                position: 'top'
+            },            {
+                element: '#flowDiv',
+                intro: 'Please choose one travel type by clicking.',
+                position: 'left'
+            },
+            {
+                element: '#map',
+                intro: 'Please double click on a travel zone',
+                position: 'top'
+            },
+            {
+                element: '#nextIteration',
+                intro: 'Now, you could try to click on this button to run next iteration',
+                position: 'top'
+            },
+            {
+                element: '.switch',
+                intro: 'Could you try to toggle this slider? Keep an eye on the map!',
+                position: 'top'
+            },
+            {
+                element: '.switch',
+                intro: 'When the flows almost converge, you could switch back this slider to stop the iteration.',
+                position: 'top'
+            },
+            {
+                element: '#map',
+                intro: 'You could click on one red flow to see its sub-flows.',
+                position: 'top'
+            },
+            {
+                element: '#clusters',
+                intro: 'You could try to change the number of clusters.',
+                position: 'top'
+            },
+            {
+                element: '#RerunButton',
+                intro: 'Click on this rerun button to set up the new number of clusters.',
+                position: 'top'
+            },
+            {
+                element: '.dataset',
+                intro: 'You could select a different data set to observe',
+                position: 'top'
+            },
+
+        ]
+    });
+    intro1.start();
+});
