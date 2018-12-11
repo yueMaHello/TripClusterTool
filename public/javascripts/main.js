@@ -36,6 +36,13 @@ let totalCsvFileTitle = {csvFileUrl:"./data/result_total.csv",
     dest_y:"Dest_YCoord",
     weight:"Total"
 };
+let hardCodingTravelPurpose = {
+    'O': 'Other',
+    'W': 'Work',
+    'B': 'Work and School',
+    'Other_S': 'Other to School',
+    'PSE_S':'PSE to School'
+}
 let map;
 let currentIteration = 1;//initialization
 let result;
@@ -91,7 +98,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             $("#clusters").val(clusterNumber);
             $("#currentIteration").prop('disabled', true);
             $("#flowTable tr").remove();
-            $("#flowTable").append('<tr><th>Travel Type Selction</th></tr>');
+            $("#flowTable").append('<tr><th>Travel Purpose</th></tr>');
 
             //use d3 to read files
             d3.queue()
@@ -107,7 +114,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 travelMatrix = totalDataMatrix;
                 //dynamic fill the flowTable based on unique travel type
                 uniqueTravelType.forEach(function(key){
-                    $("#flowTable").append('<tr class="clickableRow2"><td>'+key+'</td></tr>');
+                    $("#flowTable").append('<tr class="clickableRow2"><td>'+hardCodingTravelPurpose[key]+'</td></tr>');
                     $('#wait').hide();
                 });
                 //add click event to the 'travel type selection' table
@@ -117,7 +124,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                     dojo.forEach(connections,dojo.disconnect);
                     $("#flowTable tr").removeClass("selected");
                     let rowItem = $(this).children('td').map(function () {
-                        return this.innerHTML;
+                        return objectKeyByValue(hardCodingTravelPurpose,this.innerHTML);
                     }).toArray();
                     $(this).addClass("selected");
                     selectedMatrix=rowItem[0];
@@ -137,9 +144,6 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 zoom: 10,
                 basemap: "gray",
                 minZoom: 3
-            });
-            map.on('click',function(e){
-                console.log(e)
             });
             //LRT layer
             let lrtFeatureLayer = new FeatureLayer("https://services8.arcgis.com/FCQ1UtL7vfUUEwH7/arcgis/rest/services/LRT/FeatureServer/0",{
@@ -664,7 +668,9 @@ function Variable(initVal, onChange)
         this.onChange();
     };
 }
-
+function objectKeyByValue (obj, val) {
+    return Object.entries(obj).find(i => i[1] === val);
+}
 $('#tour').on('click',function(e){
     whetherHadATour = true;
     let intro1 = introJs();
