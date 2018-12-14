@@ -36,13 +36,15 @@ let totalCsvFileTitle = {csvFileUrl:"./data/result_total.csv",
     dest_y:"Dest_YCoord",
     weight:"Total"
 };
+//The following code defines different travel purpose categories.  It should include ALL categories from the datasheet (result....csv)
+// If the categories in the data have been updated, then check below code to include them.
 let hardCodingTravelPurpose = {
     'O': 'Other',
     'W': 'Work',
     'B': 'Work and School',
     'Other_S': 'Other to School',
     'PSE_S':'PSE to School'
-}
+};
 let map;
 let currentIteration = 1;//initialization
 let result;
@@ -105,7 +107,8 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             .defer(d3.csv,transitCsvFileTitle.csvFileUrl)
             .defer(d3.csv,totalCsvFileTitle.csvFileUrl)
             .await(function(error,transitdata,totaldata) {
-                let uniqueTravelType = transitdata.map(transitdata => transitdata.Purpose_Category)
+                //This line tells how to find Unique travel type in the dataset. you may let it be transitdata or totaldata
+                let uniqueTravelType = totaldata.map(totaldata => totaldata.Purpose_Category)
                     .filter((value, index, self) => self.indexOf(value) === index);
                 //convert the data into desired Json format
                 transitDataMatrix = splitDataIntoTravelMatrix(uniqueTravelType,transitdata);
@@ -119,7 +122,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 });
                 //add click event to the 'travel type selection' table
                 $(".clickableRow2").on("click", function() {
-
+                    map.enablePan();
                     //highlight selected row
                     dojo.forEach(connections,dojo.disconnect);
                     $("#flowTable tr").removeClass("selected");
@@ -165,6 +168,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             map.on("load", function () {
                 map.infoWindow.resize(100,100);
                 map.disableDoubleClickZoom();
+                map.disablePan();
                 map.addLayer(lrtFeatureLayer);
                 map.addLayer(hydroLayer)
             });
@@ -176,6 +180,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             map.addLayer(geoJsonLayer1);
             //cluster data when clicking on a district zone
             function MouseClickhighlightGraphic(evt){
+
                 map.removeLayer(selectedDistrictLayer);
                 if(selectedFlowLayer){
                     map.removeLayer(selectedFlowLayer);
@@ -204,7 +209,6 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             on(map, "update-end", hideLoading);
             //disable all the map navigation actions
             function showLoading() {
-                map.disableMapNavigation();
                 map.hideZoomSlider();
             }
             //enable map navigation actions
