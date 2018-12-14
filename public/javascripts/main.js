@@ -4,14 +4,13 @@ The Kmeans process is sped up by multi-threading method in browser,
 and is visualized on the map to let user clearly see the converging process.
 One important thing needed to be careful is that the data has to provide lat and lng in ESRI 3776 format instead of general 4326
 Since ESRI 4326 is not measured in meters and will lead to issue.
-Since multi-threading and visualization after each iteration in Browser is quite complicated, the code is complex as well.
 If you have to change the code, please be very careful!!!
 */
 //show the loading symbol
 $('#wait').show();
 //initialize title
 $('#title').text('Trip Cluster Tool');
-
+let districtLayerIDTitle = 'District';//if you have change the district layer(district1669.geojson), you may need to update this variable
 //If your csvfiles' title changes, just change values in this Object.
 //You don't need to change other code
 let transitCsvFileTitle = {csvFileUrl:"./data/result_transit.csv",
@@ -123,6 +122,8 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 //add click event to the 'travel type selection' table
                 $(".clickableRow2").on("click", function() {
                     map.enablePan();
+                    $('.a_button').prop('disabled', false);
+
                     //highlight selected row
                     dojo.forEach(connections,dojo.disconnect);
                     $("#flowTable tr").removeClass("selected");
@@ -169,6 +170,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 map.infoWindow.resize(100,100);
                 map.disableDoubleClickZoom();
                 map.disablePan();
+                $('.a_button').prop('disabled', true);
                 map.addLayer(lrtFeatureLayer);
                 map.addLayer(hydroLayer)
             });
@@ -186,7 +188,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                     map.removeLayer(selectedFlowLayer);
                 }
                 selectedDistrictLayer = new GraphicsLayer({ id: "selectedDistrictLayer" });
-                selectedDistrict =evt.graphic.attributes.District;
+                selectedDistrict =evt.graphic.attributes[districtLayerIDTitle];
 
                 let highlightSymbol = new SimpleFillSymbol(
                     SimpleFillSymbol.STYLE_SOLID,
@@ -501,8 +503,8 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
             connect.connect(graphicsLayer,"onClick",function(evt){
 
                 let clickedGroup = evt.graphic.attributes.index || evt.graphic.symbol.index;
-                let amount = evt.graphic.attributes.demand || evt.graphic.symbol.demand;
-                addPoint(evt,amount);
+
+
                 if(typeof(clickedGroup)!=="undefined"){
                     map.removeLayer(startEndLayer);
                     startEndLayer = new GraphicsLayer({ id: "startEndLayer" });
@@ -529,14 +531,16 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                     map.addLayer(startEndLayer);
 
                 }
+                addPoint(evt);
             });
+
         }
 
-        function addPoint(evt,number) {
-
+        function addPoint(evt) {
+            let amount = evt.graphic.attributes.demand || evt.graphic.symbol.demand;
             map.infoWindow.setTitle("Demand");
             map.infoWindow.setContent(
-                 ""+ number+""
+                 ""+ amount+""
             );
             map.infoWindow.show(evt.mapPoint, map.getInfoWindowAnchor(evt.screenPoint));
         }
