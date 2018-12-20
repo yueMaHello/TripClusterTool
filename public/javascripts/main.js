@@ -10,9 +10,9 @@ If you have to change the code, please be very careful!!!
 $('#wait').show();
 //initialize title
 $('#title').text('Trip Cluster Tool');
-let districtLayerIDTitle = 'District';//if you have change the district layer(district1669.geojson), you may need to update this variable
-//If your csvfiles' title changes, just change values in this Object.
-//You don't need to change other code
+//If you have change the district layer(district1669.geojson), you may need to update this variable
+let districtLayerIDTitle = 'District';
+//If your csvfiles' title changes, just change values in this Object. You don't need to change other code
 let transitCsvFileTitle = {csvFileUrl:"./data/result_transit.csv",
     origin_zone:"OriginZoneTAZ1669EETP",
     origin_district:"OriginZoneDistrictTAZ1669EETP",
@@ -36,7 +36,7 @@ let totalCsvFileTitle = {csvFileUrl:"./data/result_total.csv",
     weight:"Total"
 };
 //The following code defines different travel purpose categories.  It should include ALL categories from the datasheet (result....csv)
-// If the categories in the data have been updated, then check below code to include them.
+//If the categories in the data have been updated, then check below code to include them.
 let hardCodingTravelPurpose = {
     'O': 'Other',
     'W': 'Work',
@@ -103,6 +103,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
 
             //use d3 to read files
             d3.queue()
+            //.defer(d3.csv,transitCsvFileTitle['csvFileUrl'])
             .defer(d3.csv,transitCsvFileTitle.csvFileUrl)
             .defer(d3.csv,totalCsvFileTitle.csvFileUrl)
             .await(function(error,transitdata,totaldata) {
@@ -154,6 +155,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 mode: FeatureLayer.MODE_SNAPSHOT,
                 outFields: ["*"],
             });
+            //Edmonton's hydro layer
             let hydroLayer = new FeatureLayer("https://services8.arcgis.com/FCQ1UtL7vfUUEwH7/arcgis/rest/services/edmontonHydro/FeatureServer/0",{
                 mode: FeatureLayer.MODE_SNAPSHOT,
                 outFields: ["*"],
@@ -178,11 +180,11 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 url:"../data/geoInfo/district1669.geojson",
                 id:"geoJsonLayer"
             });
+            //delete info window
             geoJsonLayer1.setInfoTemplate(false);
             map.addLayer(geoJsonLayer1);
             //cluster data when clicking on a district zone
             function MouseClickhighlightGraphic(evt){
-
                 map.removeLayer(selectedDistrictLayer);
                 if(selectedFlowLayer){
                     map.removeLayer(selectedFlowLayer);
@@ -237,10 +239,10 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                     $("#autoRun").click();
                 }
             });
-
-
             $('input:radio[name=allOrTransit]').change(function() {
-                //cluster all districts
+                //cluster all travel flows of Edmonton.
+                //The user don't need to select a specific zone.
+                //This is the same concept as HBA's flow cluster tool
                 if(this.value==='all'){
                     $("#currentIteration").val("0");
                     clusterNumber =Number($("#clusters").val());
@@ -248,7 +250,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                     processData(selectedMatrix,clusterNumber,1);
                     $('#title').text('All Trip Cluster Analysis Tool')
                 }
-                //cluster single destination district
+                //cluster a single destination district's travel flows
                 else{
                     $("#currentIteration").val("0");
                     clusterNumber =Number($("#clusters").val());
@@ -271,9 +273,8 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 map.removeLayer(graphicsLayer);
                 map.removeLayer(startEndLayer);
                 graphicsLayer = new GraphicsLayer({ id: "graphicsLayer" });
-                //read the clustered lines
                 map.addLayer(graphicsLayer);
-                //each clusted line should have a group of single lines
+                //each clustered line should contain a group of single lines
                 if(myVar.GetValue() === 1){
                     currentIteration = Number($('#currentIteration').val())+1;
                     $('#currentIteration').val(currentIteration);
@@ -301,20 +302,17 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                 map.hideZoomSlider();
                 result = splitIntoGroups();
             });
-            //continue running k-means iteration when the user toggle the button
+            //continue running k-means iteration when the user toggles the button
             $("#autoRun").click(function(e, parameters) {
-
                 if($("#autoRun").is(':checked')){
                     $("#nextIteration").prop('disabled', true);
                     $("#RerunButton").prop('disabled', true);
                     $("#WantJson").prop('disabled', true);
-
                     map.disableMapNavigation();
                     map.hideZoomSlider();
                     result = splitIntoGroups();
                 }
             });
-
             //Rerun kmeans
             $("#RerunButton").click(function(){
                 $("#currentIteration").val("0");
@@ -384,6 +382,7 @@ require(["esri/geometry/projection","esri/map", "esri/Color", "esri/layers/Graph
                     newCentroid= transitArray;
                 }
                 else{
+                    //biased way to initialize the k-means clustered
                     newCentroid= new Array(clusterNumber);
                     for(let i2 = 0;i2<newCentroid.length;i2++){
                         let randomWeight = Math.floor(Math.random()*(totalWeight));

@@ -15,6 +15,7 @@
     "fs": "0.0.1-security",
     "hound": "^1.0.5",
     "http-errors": "^1.6.3",
+    "http-proxy": "^1.17.0",
     "jade": "^1.11.0",
     "jsdom": "^11.11.0",
     "line-by-line": "^0.1.6",

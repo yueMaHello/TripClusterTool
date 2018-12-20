@@ -6,18 +6,17 @@ html
         link(href="./externalStylesheet/introjs-modern.css" rel="stylesheet")
 
         script(src="./externalJS/intro.js")
-        script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js")
-        script(src="https://d3js.org/d3.v4.min.js")
-        script(src="https://js.arcgis.com/3.25/")
+        script(src="./externalJS/jquery.min.js")
+        script(src="./externalJS/d3.v4.min.js")
+        script(src="https://js.arcgis.com/3.25")
         script(src='./externalJS/multithread.js')
         script(src = './javascripts/table.js')
-        script(src = './javascripts/fct_version_info.js')
         script(src="./vendor/terraformer/terraformer.min.js")
         script(src="./vendor/terraformer-arcgis-parser/terraformer-arcgis-parser.min.js")
 
         title= "Trip Cluster Tool"
         link(rel='stylesheet', href='/stylesheets/style.css')
-        link(rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/themes/blitzer/jquery-ui.css" type="text/css")
+        link(rel="stylesheet" href="./externalStylesheet/jquery-ui.css" type="text/css")
         link(rel="stylesheet" href="http://js.arcgis.com/3.25/esri/css/esri.css" type="text/css")
         link(rel="stylesheet" href="http://js.arcgis.com/3.25/dijit/themes/claro/claro.css")
 
@@ -39,10 +38,10 @@ html
               div(class = "clustered-line" id = "clustered-line")
                 Thing Clustered flow
               br
-              input(type = "text",id="circleOrigin")
+              input(type = "text" id="circleOrigin")
               Thing Origin point
               br
-              input(type = "text",id="circleDest")
+              input(type = "text" id="circleDest")
               Thing Destination point
               br
 
@@ -53,7 +52,7 @@ html
                 div(class = "controlPanel" data-role='fieldcontain')
                   fieldset(data-role='controlgroup')
                     label(for='clusters') Number Of Clusters:
-                       input(id='clusters',type='text',value='',name='clusters' size="2")
+                       input(id='clusters' type='text' value='' name='clusters' size="2")
                        //Set the default cluster number to 30
                        input(type="range" min="5" max="100" value="30"  id="clusterRange")
                        input( class="a_button" type="Button" id = "RerunButton" value="Run again ")
