@@ -33,7 +33,7 @@ web application. The Weighted-Kmeans algorithm is used for clustering. The App c
 #### 1. Use your terminal going to the root './Trips_Cluster_Tool' and type 'npm start'
 1. You can see some messages in the terminal.
 
-#### 2. Use Google Chrome or Firefox to browse "https://localhost:3044" or "http://162.106.202.155:3044". Firefox may work better than Google Chrome. 
+#### 2. Use Google Chrome or Firefox to browse "https://localhost:3044". Firefox may work better than Google Chrome. 
 
 ## Current Issues:
 1. Sometimes, when you click on a line, the application may not show dots properly. You should terminate the browser and restart the browser.
